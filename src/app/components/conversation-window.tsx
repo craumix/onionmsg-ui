@@ -18,6 +18,8 @@ interface Message {
 export var ConvWin: ConversationWindow
 
 export class ConversationWindow extends React.Component<any, any> {
+    messagesEndRef: React.RefObject<HTMLDivElement>;
+
     constructor(props: any) {
         super(props)
         this.state = {
@@ -26,6 +28,8 @@ export class ConversationWindow extends React.Component<any, any> {
             lastMessageSenderUUID: '',
             emojiSelectorVisible: false
         }
+
+        this.messagesEndRef = React.createRef()
     }
 
     render(): JSX.Element {
@@ -50,7 +54,11 @@ export class ConversationWindow extends React.Component<any, any> {
                     width: '100%',
                     overflowY: 'auto',
                 }}>
-                    {this.state.messagesContainers}
+                    <div>
+                        {this.state.messagesContainers}
+                    </div>
+
+                    <div ref={this.messagesEndRef} />
                 </div>
                 <div style={{
                     position: 'absolute',
@@ -124,10 +132,12 @@ export class ConversationWindow extends React.Component<any, any> {
 
     hardReloadMessages(): void {
         this.loadNewMessages(false)
+        this.scrollMessageContainerDown(true)
     }
 
     loadNextMessage(): void {
         this.loadNewMessages(true, 1)
+        this.scrollMessageContainerDown()
     }
 
     loadNewMessages(append: boolean, count?: number): void {
@@ -154,6 +164,10 @@ export class ConversationWindow extends React.Component<any, any> {
                     lastMessageSenderUUID: lastSender,
                 })
             })
+    }
+
+    scrollMessageContainerDown(auto?: boolean): void {
+        this.messagesEndRef.current.scrollIntoView({ behavior: auto ? 'auto' : 'smooth' })
     }
 }
 
