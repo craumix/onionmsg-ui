@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { fetchRoomList } from '../api/rooms'
+import { fetchRoomList } from '../api/api'
 
 interface ConversationInfo {
     uuid: string
@@ -24,18 +24,20 @@ export class ConversationList extends React.Component<unknown, ConversationListS
 
     componentDidMount(): void {
         fetchRoomList()
-        .then(res => res.json())
-        .then(result => {
+            .then(res => res.json())
+            .then(result => {
                 const foo: JSX.Element[] = []
-                result.forEach((element: ConversationInfo) => {
-                    foo.push(<ConversationListElement info={element} key={element.uuid} />)
-                })
+                if (result != null) {
+                    result.forEach((element: ConversationInfo) => {
+                        foo.push(<ConversationListElement info={element} key={element.uuid} />)
+                    })
+                }
 
                 this.setState({
                     conversations: foo
                 })
             }
-        )
+            )
     }
 
     render(): JSX.Element {

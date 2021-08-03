@@ -1,13 +1,13 @@
 import EmojiPicker from "emoji-picker-react";
 import { generateFromString } from "generate-avatar";
 import React from "react";
-import { fetchRoomMessages, postMessageToRoom } from "../api/rooms";
+import { fetchRoomMessages, postMessageToRoom } from "../api/api";
 import { decode as decode64 } from 'js-base64';
 
 interface MessageMeta {
     sender: string
     time: string
-    type: number
+    type: string
 }
 
 interface Message {
@@ -15,12 +15,15 @@ interface Message {
     content: string
 }
 
-export class ConversationWindow extends React.Component<any,any> {
+export var ConvWin: ConversationWindow
+
+export class ConversationWindow extends React.Component<any, any> {
     constructor(props: any) {
         super(props)
         this.state = {
             messageInput: '',
             messagesContainers: [],
+            lastMessageSenderUUID: '',
             emojiSelectorVisible: false
         }
     }
@@ -63,79 +66,94 @@ export class ConversationWindow extends React.Component<any,any> {
                         width: '80%',
                         resize: 'none',
                         float: 'left'
-                    }} onKeyDown={ event => {
-                        if(event.key === 'Enter' && !event.shiftKey) {
+                    }} onKeyDown={event => {
+                        if (event.key === 'Enter' && !event.shiftKey) {
                             event.preventDefault()
-                            
-                            //TODO FIXME
-                            this.refreshMessages()
 
-                            if(this.state.messageInput.length == 0) {
+                            if (this.state.messageInput.length == 0) {
+                                //Force-Reload
+                                this.hardReloadMessages()
                                 return
                             }
-                            
+
                             postMessageToRoom(this.props.match.params.uuid, this.state.messageInput)
-                            .then(res => {
-                                if(res.ok) {
-                                    console.log('Message sent!')
-                                    this.setState({
-                                        messageInput: ''
-                                    })
-                                }else {
-                                    console.log('Error sending message!\n' + res.text)
-                                }
-                            })
+                                .then(res => {
+                                    if (res.ok) {
+                                        console.log('Message sent!')
+                                        this.setState({
+                                            messageInput: ''
+                                        })
+                                        this.loadNextMessage()
+                                    } else {
+                                        console.log('Error sending message!\n' + res.text)
+                                    }
+                                })
                         }
                     }} value={this.state.messageInput} onChange={e => this.setState({
                         messageInput: e.target.value
-                    })}/>
+                    })} />
                     <button style={{
                         border: '0px',
                         background: 'white',
                         fontSize: '20px'
-                    }} onClick={() => this.setState({emojiSelectorVisible: !this.state.emojiSelectorVisible})}>😃</button>
+                    }} onClick={() => this.setState({ emojiSelectorVisible: !this.state.emojiSelectorVisible })}>😃</button>
                     <div hidden={!this.state.emojiSelectorVisible} style={{
                         position: 'absolute',
                         bottom: '64px',
                         right: '0px'
                     }}>
                         <EmojiPicker native={true}
-                            onEmojiClick={(event, emojiObject) => this.setState({messageInput: this.state.messageInput + emojiObject.emoji})} />
+                            onEmojiClick={(event, emojiObject) => this.setState({ messageInput: this.state.messageInput + emojiObject.emoji })} />
                     </div>
-                    
+
                 </div>
             </div>
         )
     }
 
     componentDidMount(): void {
-        this.refreshMessages()
+        this.hardReloadMessages()
+        ConvWin = this
     }
 
     componentDidUpdate(prevProps: any): void {
-        if(this.props.match.params.uuid != prevProps.match.params.uuid) {
-            this.refreshMessages()
+        if (this.props.match.params.uuid != prevProps.match.params.uuid) {
+            this.hardReloadMessages()
         }
     }
 
-    refreshMessages(): void {
-        fetchRoomMessages(this.props.match.params.uuid)
-        .then(res => res.json())
-        .then(result => {
-            const foo: JSX.Element[] = []
-            result.forEach((element: Message, index: number) => {
-                if(index == 0 || result[index - 1].meta.sender != element.meta.sender) {
-                    foo.push(<AuthorDivider author={element.meta.sender} key={index + "div"}/>)
-                }
-                if(element.meta.type == 0) {
-                    foo.push(<MessageContainer message={element} key={index} />)
-                }
-            });
+    hardReloadMessages(): void {
+        this.loadNewMessages(false)
+    }
 
-            this.setState({
-                messagesContainers: foo
+    loadNextMessage(): void {
+        this.loadNewMessages(true, 1)
+    }
+
+    loadNewMessages(append: boolean, count?: number): void {
+        fetchRoomMessages(this.props.match.params.uuid, count)
+            .then(res => res.json())
+            .then(result => {
+                const foo: JSX.Element[] = append ? this.state.messagesContainers : []
+                let lastSender = append ? this.state.lastMessageSenderUUID : ''
+                if (result != null) {
+                    result.forEach((element: Message, index: number) => {
+                        //TODO remove usage of Math.random for keys
+                        if (lastSender != element.meta.sender) {
+                            foo.push(<AuthorDivider author={element.meta.sender} key={Math.random()} />)
+                            lastSender = element.meta.sender
+                        }
+                        if (element.meta.type === 'mtype.text') {
+                            foo.push(<MessageContainer message={element} key={Math.random()} />)
+                        }
+                    });
+                }
+
+                this.setState({
+                    messagesContainers: foo,
+                    lastMessageSenderUUID: lastSender,
+                })
             })
-        })
     }
 }
 

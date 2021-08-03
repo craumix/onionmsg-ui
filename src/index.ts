@@ -15,6 +15,7 @@ const createWindow = (): void => {
     height: 600,
     width: 800,
     autoHideMenuBar: true,
+    title: "Allium",
     webPreferences: { webSecurity: false }
   });
 
