@@ -1,0 +1,12 @@
+.markdownContainer {
+    margin: 8px;
+    margin-left: 64px;
+    font-size: 14px;
+}
+
+.markdownContainer * {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+}

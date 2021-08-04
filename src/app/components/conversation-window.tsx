@@ -5,6 +5,7 @@ import { fetchRoomMessages, postMessageToRoom } from "../api/api";
 import { decode as decode64 } from 'js-base64';
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import styles from "./conversation-window.css"
 
 interface MessageMeta {
     sender: string
@@ -140,16 +141,17 @@ export class ConversationWindow extends React.Component<any, any> {
 
     hardReloadMessages(): void {
         this.loadNewMessages(false)
-        this.scrollMessageContainerDown(true)
+            .then(() => this.scrollMessageContainerDown(true))
     }
 
     loadNextMessage(): void {
         this.loadNewMessages(true, 1)
-        this.scrollMessageContainerDown()
+            .then(() => this.scrollMessageContainerDown())
+        
     }
 
-    loadNewMessages(append: boolean, count?: number): void {
-        fetchRoomMessages(this.props.match.params.uuid, count)
+    loadNewMessages(append: boolean, count?: number): Promise<void> {
+        return fetchRoomMessages(this.props.match.params.uuid, count)
             .then(res => res.json())
             .then(result => {
                 const foo: JSX.Element[] = append ? this.state.messagesContainers : []
@@ -221,11 +223,7 @@ class MessageContainer extends React.Component<MessageContainerProps> {
                 marginLeft: '8px',
                 marginRight: '8px',
             }}>
-                <div style={{
-                    margin: '8px',
-                    marginLeft: '64px',
-                    fontSize: '14px'
-                }}>
+                <div className={styles.markdownContainer}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]} children={decode64(this.props.message.content)} />
                 </div>
             </div>
