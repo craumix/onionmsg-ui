@@ -1,6 +1,8 @@
 declare namespace ConversationWindowCssNamespace {
   export interface IConversationWindowCss {
     markdownContainer: string;
+    messageContainer: string;
+    messageTimestamp: string;
   }
 }
 

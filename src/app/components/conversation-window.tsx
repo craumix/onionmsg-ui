@@ -271,14 +271,10 @@ interface MessageContainerProps {
 class MessageContainer extends React.Component<MessageContainerProps> {
   render(): JSX.Element {
     return (
-      <div
-        style={{
-          width: "calc(100% - 16px)",
-          height: "fit-content",
-          marginLeft: "8px",
-          marginRight: "8px",
-        }}
-      >
+      <div className={styles.messageContainer}>
+        <p title={this.longTimestamp()} className={styles.messageTimestamp}>
+          {this.shortTimestamp()}
+        </p>
         <div className={styles.markdownContainer}>
           <ReactMarkdown
             remarkPlugins={[remarkGfm]}
@@ -287,6 +283,19 @@ class MessageContainer extends React.Component<MessageContainerProps> {
         </div>
       </div>
     );
+  }
+
+  messageDate(): Date {
+    return new Date(this.props.message.meta.time)
+  }
+
+  shortTimestamp(): string {
+    let date = this.messageDate();
+    return date.getHours() + ":" + date.getMinutes();
+  }
+
+  longTimestamp(): string {
+    return this.messageDate().toLocaleString()
   }
 }
 
