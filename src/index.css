@@ -4,24 +4,3 @@ body {
   max-width: 38rem;
   padding: 2rem;
 }
-
-#sidebar {
-  position: absolute;
-  top: 0px;
-  left: 0px;
-  height: 100%;
-  width: 250px;
-  margin: 0px;
-  padding: 0px;
-  background-color: #EEE;
-}
-
-#stage {
-  position: absolute;
-  top: 0px;
-  left: 250px;
-  height: 100%;
-  width: calc(100% - 250px);
-  margin: 0px;
-  padding: 0px;
-}

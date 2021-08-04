@@ -17,8 +17,6 @@ interface Message {
     content: string
 }
 
-export var ConvWin: ConversationWindow
-
 export class ConversationWindow extends React.Component<any, any> {
     messagesEndRef: React.RefObject<HTMLDivElement>;
 
@@ -36,7 +34,16 @@ export class ConversationWindow extends React.Component<any, any> {
 
     render(): JSX.Element {
         return (
-            <div>
+            <div style={{
+                background: 'white',
+                position: 'absolute',
+                top: '0px',
+                left: '250px',
+                height: '100%',
+                width: 'calc(100% - 250px)',
+                margin: '0px',
+                padding: '0px',
+            }}>
                 <div style={{
                     position: 'absolute',
                     width: '100%',
@@ -123,7 +130,6 @@ export class ConversationWindow extends React.Component<any, any> {
 
     componentDidMount(): void {
         this.hardReloadMessages()
-        ConvWin = this
     }
 
     componentDidUpdate(prevProps: any): void {
@@ -218,7 +224,6 @@ class MessageContainer extends React.Component<MessageContainerProps> {
                 <div style={{
                     margin: '8px',
                     marginLeft: '64px',
-                    maxWidth: 'calc(100% - 72px)',
                     fontSize: '14px'
                 }}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]} children={decode64(this.props.message.content)} />

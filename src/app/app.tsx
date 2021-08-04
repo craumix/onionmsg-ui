@@ -2,13 +2,17 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import { HashRouter as Router, Route } from 'react-router-dom';
 import { ConversationList } from './components/conversation-list';
-import { ConversationWindow, ConvWin } from './components/conversation-window';
+import { ConversationWindow } from './components/conversation-window';
 import { w3cwebsocket as WebSocket } from "websocket";
+import { AppSidebar } from './components/app-sidebar';
 
 interface DaemonNotification {
   type: string
   data: any
 }
+
+let AppSidebarRef: React.RefObject<AppSidebar>
+let ConversationWindowRef: React.RefObject<ConversationWindow>
 
 function render() {
   const client = new WebSocket('ws://localhost:10052/v1/ws')
@@ -22,9 +26,9 @@ function render() {
 
     if (notification.type === 'NewMessage') {
       //Do notifications
-      if (ConvWin && ConvWin.props.match.params.uuid === notification.data.uuid) {
+      if (ConversationWindowRef.current && ConversationWindowRef.current.props.match.params.uuid === notification.data.uuid) {
         console.log("callback")
-        ConvWin.loadNextMessage()
+        ConversationWindowRef.current.loadNextMessage()
       }
     }
 
@@ -33,15 +37,12 @@ function render() {
   ReactDOM.render(
     <div>
       <Router>
-        <div id="sidebar">
-          <ConversationList />
-        </div>
-        <div id="stage" style={{
-          background: 'white'
-        }}>
-          <Route path="/c/:uuid" component={ConversationWindow} />
-        </div>
-
+        <AppSidebar ref={AppSidebarRef}/>
+        <Route path="/c/:uuid" render={(props) =>
+          <div>
+            <ConversationWindow ref={ConversationWindowRef} {...props}/>
+          </div>
+        } />
       </Router>
     </div>,
     document.getElementById("app"));

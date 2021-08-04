@@ -21,7 +21,6 @@ const createWindow = (): void => {
 
   //Open external urls in Browser
   const handleRedirect = (e: any, url: string) => {
-    console.log(e.constructor.name)
     if (url !== e.sender.getURL()) {
       e.preventDefault()
       shell.openExternal(url)
