@@ -3,6 +3,8 @@ import { generateFromString } from "generate-avatar";
 import React from "react";
 import { fetchRoomMessages, postMessageToRoom } from "../api/api";
 import { decode as decode64 } from 'js-base64';
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 
 interface MessageMeta {
     sender: string
@@ -213,11 +215,14 @@ class MessageContainer extends React.Component<MessageContainerProps> {
                 marginLeft: '8px',
                 marginRight: '8px',
             }}>
-                <p style={{
+                <div style={{
                     margin: '8px',
                     marginLeft: '64px',
+                    maxWidth: 'calc(100% - 72px)',
                     fontSize: '14px'
-                }} >{decode64(this.props.message.content)}</p>
+                }}>
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} children={decode64(this.props.message.content)} />
+                </div>
             </div>
         )
     }
