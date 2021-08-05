@@ -71,11 +71,10 @@ export class ConversationWindow extends React.Component<any, any> {
             top: "32px",
             height: "calc(100% - 96px)",
             width: "100%",
-            overflowY: "auto",
+            overflowX: "hidden",
           }}
         >
           <div>{this.state.messagesContainers}</div>
-
           <div ref={this.messagesEndRef} />
         </div>
         <div
@@ -236,6 +235,7 @@ class AuthorDivider extends React.Component<any> {
           marginTop: "16px",
           marginLeft: "8px",
           marginRight: "8px",
+          marginBottom: "16px"
         }}
       >
         <Avatar
@@ -286,16 +286,18 @@ class MessageContainer extends React.Component<MessageContainerProps> {
   }
 
   messageDate(): Date {
-    return new Date(this.props.message.meta.time)
+    return new Date(this.props.message.meta.time);
   }
 
   shortTimestamp(): string {
-    let date = this.messageDate();
-    return date.getHours() + ":" + date.getMinutes();
+    return this.messageDate().toLocaleTimeString(navigator.language, {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   }
 
   longTimestamp(): string {
-    return this.messageDate().toLocaleString()
+    return this.messageDate().toLocaleString();
   }
 }
 
