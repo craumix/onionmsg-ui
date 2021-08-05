@@ -11,8 +11,8 @@ interface DaemonNotification {
   data: any;
 }
 
-let AppSidebarRef: React.RefObject<AppSidebar>;
-let ConversationWindowRef: React.RefObject<ConversationWindow>;
+const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef()
+const ConversationWindowRef: React.RefObject<ConversationWindow> = React.createRef()
 
 function render() {
   const client = new WebSocket("ws://localhost:10052/v1/ws");
