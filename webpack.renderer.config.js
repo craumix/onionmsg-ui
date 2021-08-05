@@ -14,6 +14,11 @@ rules.push({
   ]
 });
 
+rules.push({
+  test: /\.css$/,
+  loader: 'ignore-loader'
+})
+
 module.exports = {
   module: {
     rules,

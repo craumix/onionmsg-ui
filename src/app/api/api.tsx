@@ -32,7 +32,7 @@ export function fetchRoomList(): Promise<Response> {
 }
 
 export function fetchRoomMessages(uuid: string, count?: number): Promise<Response> {
-    let params:Map<string, any> = new Map([['uuid', uuid]])
+    const params:Map<string, any> = new Map([['uuid', uuid]])
     if(count) {
         params.set('count', count)
     }
