@@ -10,13 +10,13 @@ rules.push({
       loader: "css-loader",
       options: { modules: true }
     },
-    'sass-loader'
+    "sass-loader"
   ]
 });
 
 rules.push({
   test: /\.css$/,
-  loader: 'ignore-loader'
+  use: ["style-loader", "css-loader"]
 })
 
 module.exports = {
