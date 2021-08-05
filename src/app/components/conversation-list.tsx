@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { fetchRoomList } from "../api/api";
-import styles from "./conversation-list.css";
+import styles from "./conversation-list.sass";
 
 interface ConversationInfo {
   uuid: string;

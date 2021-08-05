@@ -5,7 +5,7 @@ import { fetchRoomMessages, postMessageToRoom } from "../api/api";
 import { decode as decode64 } from "js-base64";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import styles from "./conversation-window.css";
+import styles from "./conversation-window.sass";
 
 interface MessageMeta {
   sender: string;
