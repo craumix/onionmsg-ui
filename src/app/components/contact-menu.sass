@@ -1,0 +1,70 @@
+.tagContainer
+    width: 32em
+
+.tagInputField
+    width: 100%
+    border: none
+    font-family: monospace
+    margin-top: 8px
+    &:focus
+        outline: none
+
+.tag
+    background-color: #EEE
+    border-radius: 2px
+    margin-right: 8px
+    padding: 4px
+    padding-top: 2px
+    padding-bottom: 2px
+    white-space: nowrap
+    font-family: monospace
+
+
+.tagRemove
+    border: none
+    background: transparent
+
+.createRoomButton
+    border: none
+    user-select: none
+    margin-top: 16px
+    margin-bottom: 16px
+    width: 100%
+    border-radius: 4px
+    font-size: 16px
+    &:hover
+        background-color: #DDD
+
+.createRoomButtonDisabled
+    pointer-events: none
+    color: #AAA
+
+.contactIDListContainer
+    width: 100%
+    border-radius: 4px
+    border: 1px solid #CCC
+    height: 10em
+    overflow-y: scroll
+
+.contactIDList
+    list-style: none
+    ul
+        padding: 4px
+        border-top: 1px solid #CCC
+        margin: 0px
+        font-family: monospace
+        user-select: none
+        margin: 0px
+        &:hover
+            background-color: #EEE
+        &:first-child
+            border-top: none
+
+
+.contactIDListIcon
+    cursor: pointer
+    float: right
+    margin-right: 8px
+    border-radius: 4px
+    &:active
+      background-color: #CCC
