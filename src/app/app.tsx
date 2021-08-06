@@ -5,25 +5,15 @@ import { ConversationList } from "./components/conversation-list";
 import { ConversationWindow } from "./components/conversation-window";
 import { w3cwebsocket as WebSocket } from "websocket";
 import { AppSidebar } from "./components/app-sidebar";
+import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
 
-interface DaemonNotification {
-  type: string;
-  data: any;
-}
-
-const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef()
-const ConversationWindowRef: React.RefObject<ConversationWindow> = React.createRef()
+const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef();
+const ConversationWindowRef: React.RefObject<ConversationWindow> =
+  React.createRef();
 
 function render() {
-  const client = new WebSocket("ws://localhost:10052/v1/ws");
-  client.onopen = () => {
-    console.log("WebSocket Client Connected");
-  };
-  client.onmessage = (message: any) => {
-    console.log(message);
-    const notification: DaemonNotification = JSON.parse(message.data);
+  listenOnBackendNotifications((notification: DaemonNotification) => {
     console.log(notification);
-
     if (notification.type === "NewMessage") {
       //Do notifications
       if (
@@ -34,8 +24,10 @@ function render() {
         console.log("callback");
         ConversationWindowRef.current.loadNextMessage();
       }
+    } else if (notification.type === "NewRoom") {
+      AppSidebarRef.current.state.conversationListRef.current.appendRoom(notification.data)
     }
-  };
+  });
 
   ReactDOM.render(
     <div>
