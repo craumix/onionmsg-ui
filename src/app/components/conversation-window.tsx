@@ -244,6 +244,7 @@ class AuthorDivider extends React.Component<any> {
             marginLeft: "16px",
             borderRadius: "16px",
             float: "left",
+            userSelect: "none"
           }}
           seed={this.props.author}
         />

@@ -29,30 +29,19 @@ export class ConversationList extends React.Component<
   }
 
   componentDidMount(): void {
-    console.log(styles);
     fetchRoomList()
       .then((res) => res.json())
       .then((result) => {
-        const foo: JSX.Element[] = [];
-        const bar: React.RefObject<ConversationListElement>[] = [];
         if (result != null) {
+          this.setState({
+            listElements: [],
+            listElementRefs: [],
+          });
+
           result.forEach((element: ConversationInfo) => {
-            bar.push(React.createRef());
-            foo.push(
-              <ConversationListElement
-                info={element}
-                parent={this}
-                key={element.uuid}
-                ref={bar[bar.length - 1]}
-              />
-            );
+            this.appendRoom(element);
           });
         }
-
-        this.setState({
-          listElements: foo,
-          listElementRefs: bar,
-        });
       });
   }
 
@@ -77,6 +66,26 @@ export class ConversationList extends React.Component<
         });
       }
     );
+  }
+
+  appendRoom(info: ConversationInfo): void {
+    let refs = this.state.listElementRefs;
+    let list = this.state.listElements;
+
+    refs.push(React.createRef());
+    list.push(
+      <ConversationListElement
+        info={info}
+        parent={this}
+        key={info.uuid}
+        ref={refs[refs.length - 1]}
+      />
+    );
+
+    this.setState({
+      listElementRefs: refs,
+      listElements: list,
+    });
   }
 }
 
