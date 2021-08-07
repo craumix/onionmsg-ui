@@ -1,10 +1,12 @@
 declare namespace ContactMenuSassNamespace {
   export interface IContactMenuSass {
+    addContactIDButton: string;
     contactIDList: string;
     contactIDListContainer: string;
     contactIDListIcon: string;
     createRoomButton: string;
     createRoomButtonDisabled: string;
+    syncContactIDButton: string;
     tag: string;
     tagContainer: string;
     tagInputField: string;

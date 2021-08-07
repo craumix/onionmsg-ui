@@ -2,8 +2,19 @@ import React from "react";
 import { AppOverlayMenu } from "./app-overlay";
 import { WithContext as ReactTags } from "react-tag-input";
 import styles from "./contact-menu.sass";
-import { createContactID, createNewRoom, deleteContactID, fetchContactIDs } from "../api/api";
-import { FaCopy, FaTrash, FaUserPlus } from "react-icons/fa";
+import {
+  createContactID,
+  createNewRoom,
+  deleteContactID,
+  fetchContactIDs,
+} from "../api/api";
+import {
+  FaCopy,
+  FaRecycle,
+  FaSyncAlt,
+  FaTrash,
+  FaUserPlus,
+} from "react-icons/fa";
 
 const ContactIDLength = 43;
 
@@ -162,35 +173,43 @@ class ContactIDContainer extends React.Component<
   }
 
   componentDidMount(): void {
-    this.reloadContactIDs()
+    this.reloadContactIDs();
   }
 
   reloadContactIDs(): void {
     fetchContactIDs()
-    .then((res) => res.json())
-    .then((result) => {
-      this.setState({
-        ids: result != null ? result : [],
+      .then((res) => res.json())
+      .then((result) => {
+        this.setState({
+          ids: result != null ? result : [],
+        });
       });
-    });
   }
 
   render(): JSX.Element {
     return (
       <div>
-        <button onClick={() => {
+        <button
+          className={styles.addContactIDButton}
+          onClick={() => {
             createContactID()
-            .then(res => res.json())
-            .then(result => {
-                if(result != null) {
-                    this.setState({
-                        ids: [...this.state.ids, result.id]
-                    })
+              .then((res) => res.json())
+              .then((result) => {
+                if (result != null) {
+                  this.setState({
+                    ids: [...this.state.ids, result.id],
+                  });
                 }
-            })
+              });
+          }}
+        >
+          <FaUserPlus />
+          Add Contact ID
+        </button>
+        <button className={styles.syncContactIDButton} onClick={() => {
+          this.reloadContactIDs()
         }}>
-            <FaUserPlus />
-            Add Contact ID
+          <FaSyncAlt />
         </button>
         <div className={styles.contactIDListContainer}>
           <li className={styles.contactIDList}>
@@ -205,15 +224,14 @@ class ContactIDContainer extends React.Component<
                     size="18"
                     className={styles.contactIDListIcon}
                     onClick={() => {
-                      deleteContactID(id)
-                        .then((res) => {
-                          if (res.status == 200) {
-                            this.setState({
-                              ids: this.state.ids.filter((item) => item !== id),
-                            });
-                          }
-                          return res.text();
-                        })
+                      deleteContactID(id).then((res) => {
+                        if (res.status == 200) {
+                          this.setState({
+                            ids: this.state.ids.filter((item) => item !== id),
+                          });
+                        }
+                        return res.text();
+                      });
                     }}
                   />
                   <FaCopy
