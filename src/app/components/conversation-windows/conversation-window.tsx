@@ -136,6 +136,11 @@ export class ConversationWindow extends React.Component<any, any> {
               bottom: "64px",
               right: "0px",
             }}
+            onBlur={() => {
+              this.setState({
+                emojiSelectorVisible: false,
+              })
+            }}
           >
             <EmojiPicker
               native={true}

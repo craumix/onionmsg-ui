@@ -78,6 +78,10 @@ export function deleteContactID(id: string): Promise<Response> {
   return apiGET("/contact/delete", new Map([["id", id]]))
 }
 
+export function fetchTorinfo(): Promise<Response> {
+  return apiGET("/torlog")
+}
+
 export function postMessageToRoom(
   uuid: string,
   data: string

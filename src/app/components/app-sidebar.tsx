@@ -1,12 +1,14 @@
 import React from "react";
 import { ConversationList } from "./conversation-list";
 import styles from "./app-sidebar.sass";
-import { FaPlus } from "react-icons/fa";
+import { FaPlus, FaServer } from "react-icons/fa";
 import { ContactMenu } from "./contact-menu";
+import { BackendInfo } from "./backend-info";
 
 interface AppSidebarState {
   conversationListRef: React.RefObject<ConversationList>
   contactMenuRef: React.RefObject<ContactMenu>
+  backendInfoRef: React.RefObject<BackendInfo>
 }
 
 export class AppSidebar extends React.Component<unknown, AppSidebarState> {
@@ -14,7 +16,8 @@ export class AppSidebar extends React.Component<unknown, AppSidebarState> {
     super(props);
     this.state = {
       conversationListRef: React.createRef(),
-      contactMenuRef: React.createRef()
+      contactMenuRef: React.createRef(),
+      backendInfoRef: React.createRef()
     }
   }
 
@@ -33,13 +36,22 @@ export class AppSidebar extends React.Component<unknown, AppSidebarState> {
         }}
       >
         <ContactMenu ref={this.state.contactMenuRef} />
+        <BackendInfo ref={this.state.backendInfoRef} />
         <button
-          className={styles.createRoomButton}
+          className={styles.sidebarButton}
           onClick={() => {
             this.state.contactMenuRef.current.show();
           }}
         >
-          <FaPlus />
+          <FaPlus size="18" />
+        </button>
+        <button
+          className={styles.sidebarButton}
+          onClick={() => {
+            this.state.backendInfoRef.current.show();
+          }}
+        >
+          <FaServer size="18" />
         </button>
         <ConversationList ref={this.state.conversationListRef}/>
       </div>
