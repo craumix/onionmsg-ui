@@ -6,6 +6,7 @@ import { ConversationWindow } from "./components/conversation-windows/conversati
 import { w3cwebsocket as WebSocket } from "websocket";
 import { AppSidebar } from "./components/app-sidebar";
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
+import "./app.sass"
 
 const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef();
 const ConversationWindowRef: React.RefObject<ConversationWindow> =

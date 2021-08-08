@@ -206,9 +206,12 @@ class ContactIDContainer extends React.Component<
           <FaUserPlus />
           Add Contact ID
         </button>
-        <button className={styles.syncContactIDButton} onClick={() => {
-          this.reloadContactIDs()
-        }}>
+        <button
+          className={styles.syncContactIDButton}
+          onClick={() => {
+            this.reloadContactIDs();
+          }}
+        >
           <FaSyncAlt />
         </button>
         <div className={styles.contactIDListContainer}>
@@ -217,14 +220,7 @@ class ContactIDContainer extends React.Component<
               return (
                 <ul key={id}>
                   {id}
-                  {
-                    //TODO wrap these icons in buttons
-                  }
-                  <FaTrash
-                    style={{
-                      color: "#F44",
-                    }}
-                    size="18"
+                  <button
                     className={styles.contactIDListIcon}
                     onClick={() => {
                       deleteContactID(id).then((res) => {
@@ -236,17 +232,27 @@ class ContactIDContainer extends React.Component<
                         return res.text();
                       });
                     }}
-                  />
-                  <FaCopy
-                    style={{
-                      color: "#AAA",
-                    }}
-                    size="18"
+                  >
+                    <FaTrash
+                      size="18"
+                      style={{
+                        color: "#F44",
+                      }}
+                    />
+                  </button>
+                  <button
                     className={styles.contactIDListIcon}
                     onClick={() => {
                       navigator.clipboard.writeText(id);
                     }}
-                  />
+                  >
+                    <FaCopy
+                      size="18"
+                      style={{
+                        color: "#AAA",
+                      }}
+                    />
+                  </button>
                 </ul>
               );
             })}
