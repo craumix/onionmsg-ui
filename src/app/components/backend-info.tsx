@@ -2,11 +2,7 @@ import React from "react";
 import { fetchTorinfo } from "../api/api";
 import { AppOverlayMenu } from "./app-overlay";
 import styles from "./backend-info.sass";
-<<<<<<< HEAD
 import { SiTor } from "react-icons/si";
-=======
-import { SiTor } from "react-icons/si"
->>>>>>> 341b6348efc969ca38b1914809a402b0af859590
 
 interface TorInfo {
   log: string;
