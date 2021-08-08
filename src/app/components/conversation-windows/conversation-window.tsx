@@ -1,22 +1,8 @@
 import EmojiPicker from "emoji-picker-react";
-import { generateFromString } from "generate-avatar";
 import React from "react";
-import { fetchRoomMessages, postMessageToRoom } from "../api/api";
-import { decode as decode64 } from "js-base64";
-import ReactMarkdown from "react-markdown";
-import remarkGfm from "remark-gfm";
-import styles from "./conversation-window.sass";
-
-interface MessageMeta {
-  sender: string;
-  time: string;
-  type: string;
-}
-
-interface Message {
-  meta: MessageMeta;
-  content: string;
-}
+import { fetchRoomMessages, postMessageToRoom } from "../../api/api";
+import { Avatar } from "../avatar";
+import { MessageContainer } from "./message-container";
 
 export class ConversationWindow extends React.Component<any, any> {
   messagesEndRef: React.RefObject<HTMLDivElement>;
@@ -192,7 +178,7 @@ export class ConversationWindow extends React.Component<any, any> {
         const foo: JSX.Element[] = append ? this.state.messagesContainers : [];
         let lastSender = append ? this.state.lastMessageSenderUUID : "";
         if (result != null) {
-          result.forEach((element: Message, index: number) => {
+          result.forEach((element: ChatMessage, index: number) => {
             //TODO remove usage of Math.random for keys
             if (lastSender != element.meta.sender) {
               foo.push(
@@ -261,59 +247,6 @@ class AuthorDivider extends React.Component<any> {
           {this.props.author}
         </p>
       </div>
-    );
-  }
-}
-
-interface MessageContainerProps {
-  message: Message;
-}
-
-class MessageContainer extends React.Component<MessageContainerProps> {
-  render(): JSX.Element {
-    return (
-      <div className={styles.messageContainer}>
-        <p title={this.longTimestamp()} className={styles.messageTimestamp}>
-          {this.shortTimestamp()}
-        </p>
-        <div className={styles.markdownContainer}>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            children={decode64(this.props.message.content)}
-          />
-        </div>
-      </div>
-    );
-  }
-
-  messageDate(): Date {
-    return new Date(this.props.message.meta.time);
-  }
-
-  shortTimestamp(): string {
-    return this.messageDate().toLocaleTimeString(navigator.language, {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
-  }
-
-  longTimestamp(): string {
-    return this.messageDate().toLocaleString();
-  }
-}
-
-interface AvatarProps {
-  seed: string;
-  style?: React.CSSProperties;
-}
-
-class Avatar extends React.Component<AvatarProps> {
-  render(): JSX.Element {
-    return (
-      <img
-        style={this.props.style}
-        src={`data:image/svg+xml;utf8,${generateFromString(this.props.seed)}`}
-      />
     );
   }
 }

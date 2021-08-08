@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { HashRouter as Router, Route } from "react-router-dom";
 import { ConversationList } from "./components/conversation-list";
-import { ConversationWindow } from "./components/conversation-window";
+import { ConversationWindow } from "./components/conversation-windows/conversation-window";
 import { w3cwebsocket as WebSocket } from "websocket";
 import { AppSidebar } from "./components/app-sidebar";
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
