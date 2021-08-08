@@ -10,7 +10,6 @@ import {
 } from "../api/api";
 import {
   FaCopy,
-  FaRecycle,
   FaSyncAlt,
   FaTrash,
   FaUserPlus,

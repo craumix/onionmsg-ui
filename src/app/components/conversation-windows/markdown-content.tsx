@@ -34,14 +34,22 @@ export class MarkdownContent extends React.Component<MarkdownContentProps> {
                   language={match[1]}
                   showLineNumbers={true}
                   PreTag="div"
-                  children={String(children).replace(/\n$/, "")}
+                  children={
+                    String(children).replace(/\n$/, "").length > 0
+                      ? String(children).replace(/\n$/, "")
+                      : " "
+                  }
                   //TODO determine if these are needed
                   //{...props}
                 />
-                <button title="Copy" className={styles.codeCopyButton} onClick={() => {
-                  navigator.clipboard.writeText(String(children));
-                }}>
-                  <FaCopy size="16" />
+                <button
+                  title="Copy"
+                  className={styles.codeCopyButton}
+                  onClick={() => {
+                    navigator.clipboard.writeText(String(children));
+                  }}
+                >
+                  <FaCopy size="14" style={{ color: "#888" }} />
                 </button>
               </div>
             ) : (
