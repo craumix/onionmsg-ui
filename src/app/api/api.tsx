@@ -79,7 +79,7 @@ export function deleteContactID(id: string): Promise<Response> {
 }
 
 export function fetchTorinfo(): Promise<Response> {
-  return apiGET("/torlog")
+  return apiGET("/tor")
 }
 
 export function postMessageToRoom(

@@ -2,9 +2,17 @@ import React from "react";
 import { fetchTorinfo } from "../api/api";
 import { AppOverlayMenu } from "./app-overlay";
 import styles from "./backend-info.sass";
+import { SiTor } from "react-icons/si"
+
+interface TorInfo {
+  log: string;
+  version: string;
+  pid: number;
+  path: string;
+}
 
 interface BackendInfoProps {
-  log: string;
+  tor: TorInfo;
 }
 
 export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
@@ -14,7 +22,12 @@ export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
     super(props);
 
     this.state = {
-      log: "",
+      tor: {
+        log: "",
+        version: "",
+        pid: -1,
+        path: "",
+      },
     };
 
     this.overlayRef = React.createRef();
@@ -24,7 +37,11 @@ export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
     return (
       <AppOverlayMenu ref={this.overlayRef}>
         <h1>Backend Info</h1>
-        <p className={styles.logContainer}>{this.state.log}</p>
+        <h2><SiTor /> Tor</h2>
+        <p>Version: {this.state.tor.version}</p>
+        <p>PID: {this.state.tor.pid}</p>
+        <p>Path: {this.state.tor.path}</p>
+        <p className={styles.logContainer}>{this.state.tor.log}</p>
       </AppOverlayMenu>
     );
   }
@@ -34,7 +51,7 @@ export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
       .then((res) => res.json())
       .then((response) => {
         this.setState({
-          log: response.log,
+          tor: response,
         });
       });
   }
