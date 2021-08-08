@@ -217,6 +217,9 @@ class ContactIDContainer extends React.Component<
               return (
                 <ul key={id}>
                   {id}
+                  {
+                    //TODO wrap these icons in buttons
+                  }
                   <FaTrash
                     style={{
                       color: "#F44",

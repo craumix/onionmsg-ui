@@ -1,6 +1,7 @@
 declare namespace MarkdownContentSassNamespace {
   export interface IMarkdownContentSass {
     codeContainer: string;
+    codeCopyButton: string;
   }
 }
 
