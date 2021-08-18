@@ -6,10 +6,21 @@ declare module "*.sass" {
 interface MessageMeta {
   sender: string;
   time: string;
+}
+
+interface MessageContent {
   type: string;
+  meta: ContentMeta;
+  data: string;
+}
+
+interface ContentMeta {
+  blobUUID: string;
+  filename: string;
+  mimetype: string;
 }
 
 interface ChatMessage {
   meta: MessageMeta;
-  content: string;
+  content: MessageContent;
 }
