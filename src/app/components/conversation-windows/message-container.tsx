@@ -41,15 +41,17 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
           </p>
         );
       case "mtype.file":
+        let blobUrl = constructAPIUrl(
+          "/blob",
+          new Map([
+            ["uuid", msgContent.meta.blobUUID],
+            ["filename", msgContent.meta.filename],
+          ])
+        );
+
         let fileFooter = (
           <a
-            href={constructAPIUrl(
-              "/blob",
-              new Map([
-                ["uuid", msgContent.meta.blobUUID],
-                ["filename", msgContent.meta.filename],
-              ])
-            )}
+            href={blobUrl}
             download={msgContent.meta.filename}
             style={{
               textDecoration: "none",
@@ -59,17 +61,55 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
           </a>
         );
 
-        switch (msgContent.meta.mimetype) {
+        let mainFileElement: JSX.Element;
+        switch (msgContent.meta.mimetype?.split("/")[0]) {
+          case "image":
+            mainFileElement = <img src={blobUrl} />;
+            break;
+          case "video":
+            mainFileElement = (
+              <video
+                controls
+                controlsList="nodownload noremoteplayback"
+                disablePictureInPicture
+                preload="metadata"
+              >
+                <source src={blobUrl} type={msgContent.meta.mimetype} />
+                The format {msgContent.meta.mimetype} is not supported!
+              </video>
+            );
+            break;
+          case "audio":
+            mainFileElement = (
+              <audio
+                controls
+                controlsList="nodownload"
+                style={{
+                  height: "48px",
+                  width: "384px",
+                }}
+                preload="metadata"
+              >
+                <source src={blobUrl} type={msgContent.meta.mimetype} />
+                The format {msgContent.meta.mimetype} is not supported!
+              </audio>
+            );
+            break;
           default:
-            return (
-              <div>
-                <div className={styles.attachmentIconBox}>
-                  <FaPaperclip style={{ color: "#AAA" }} />
-                </div>
-                {fileFooter}
+            mainFileElement = (
+              <div className={styles.attachmentIconBox}>
+                <FaPaperclip style={{ color: "#AAA" }} />
               </div>
             );
         }
+
+        return (
+          <div>
+            {mainFileElement}
+            <br />
+            {fileFooter}
+          </div>
+        );
       default:
         return <p>{JSON.stringify(this.props.message)}</p>;
     }
