@@ -2,6 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { fetchRoomList } from "../api/api";
 import styles from "./conversation-list.sass";
+import { BsThreeDots } from "react-icons/bs";
+import { FaCog, FaDoorOpen } from "react-icons/fa";
 
 interface ConversationInfo {
   uuid: string;
@@ -96,6 +98,7 @@ interface ConversationListElementProps {
 
 interface ConversationListElementState {
   selected: boolean;
+  dialogOpened: boolean;
 }
 
 class ConversationListElement extends React.Component<
@@ -106,12 +109,19 @@ class ConversationListElement extends React.Component<
     super(props);
     this.state = {
       selected: false,
+      dialogOpened: false,
     };
   }
 
   render(): JSX.Element {
     return (
-      <li>
+      <li
+        className={`
+      ${styles.listEntry} 
+      ${this.state.selected ? styles.selectedEntry : ""}
+      `}
+        style={{ position: "relative" }}
+      >
         <Link
           style={{
             textDecoration: "none",
@@ -119,18 +129,83 @@ class ConversationListElement extends React.Component<
           }}
           to={"/c/" + this.props.info.uuid}
         >
-          <div
-            className={`
-                        ${styles.listEntry} 
-                        ${this.state.selected ? styles.selectedEntry : ""}
-                        `}
+          <p
+            style={{
+              marginTop: "4px",
+              marginBottom: "4px",
+            }}
             onClick={() => {
               this.props.parent.setSelectedElement(this);
             }}
           >
-            {this.props.info.name ?? this.props.info.uuid.split("-")[0]}
-          </div>
+            {this.props.info.name ?? this.props.info.uuid?.split("-")[0]}
+          </p>
         </Link>
+        <button
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            height: "20px",
+            background: "none",
+          }}
+          onClick={(event: React.MouseEvent<HTMLElement>) => {
+            event.nativeEvent.preventDefault();
+            this.setState({
+              dialogOpened: true,
+            });
+          }}
+        >
+          <BsThreeDots />
+        </button>
+        {this.state.dialogOpened && (
+          <div>
+            <div
+              style={{
+                position: "fixed",
+                width: "100%",
+                height: "100%",
+                top: "0px",
+                left: "0px",
+                zIndex: 1,
+              }}
+              onClick={(event) => {
+                event.nativeEvent.preventDefault();
+                this.setState({
+                  dialogOpened: false,
+                });
+              }}
+            />
+            {
+              //TODO make this into a dedicated component
+            }
+            <div
+              style={{
+                position: "absolute",
+                top: "30px",
+                right: "10px",
+                backgroundColor: "white",
+                borderRadius: "4px",
+                filter: "drop-shadow(0 0 0.25rem grey)",
+                zIndex: 2,
+              }}
+            >
+              <button className={styles.dialogMenuEntry}>
+                <p>
+                  <FaCog /> Settings
+                </p>
+              </button>
+              <hr
+                style={{ margin: "0px", borderRadius: "0px", color: "#EEE" }}
+              />
+              <button className={styles.dialogMenuEntry}>
+                <p style={{ color: "#F44" }}>
+                  <FaDoorOpen /> Leave Room
+                </p>
+              </button>
+            </div>
+          </div>
+        )}
       </li>
     );
   }

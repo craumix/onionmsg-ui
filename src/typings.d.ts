@@ -23,4 +23,5 @@ interface ContentMeta {
 interface ChatMessage {
   meta: MessageMeta;
   content: MessageContent;
+  sig: string;
 }

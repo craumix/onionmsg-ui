@@ -1,8 +1,15 @@
 import EmojiPicker from "emoji-picker-react";
 import React from "react";
-import { fetchRoomMessages, postMessageToRoom } from "../../api/api";
+import { FileDrop } from "react-file-drop";
+import {
+  fetchRoomMessages,
+  postFileToRoom,
+  postMessageToRoom,
+} from "../../api/api";
 import { Avatar } from "../avatar";
 import { MessageContainer } from "./message-container";
+import styles from "./conversation-window.sass";
+import { FaUpload } from "react-icons/fa";
 
 export class ConversationWindow extends React.Component<any, any> {
   messagesEndRef: React.RefObject<HTMLDivElement>;
@@ -33,6 +40,28 @@ export class ConversationWindow extends React.Component<any, any> {
           padding: "0px",
         }}
       >
+        <FileDrop
+          className={styles["file-drop"]}
+          targetClassName={styles["file-drop-target"]}
+          onDrop={(files, event) => {
+            Array.from(files).forEach((file) => {
+              //TODO add some kind of dialog
+              postFileToRoom(this.props.match.params.uuid, file).then((res) => {
+                console.log(res)
+                if (res.ok) {
+                  console.log("File sent!");
+
+                  this.loadNextMessage();
+                } else {
+                  console.log("Error sending file!\n" + res.text);
+                }
+              });
+            });
+          }}
+        >
+          <FaUpload size="48" style={{ color: "#888" }} />
+          Upload File(s)
+        </FileDrop>
         <div
           style={{
             position: "absolute",
@@ -139,7 +168,7 @@ export class ConversationWindow extends React.Component<any, any> {
             onBlur={() => {
               this.setState({
                 emojiSelectorVisible: false,
-              })
+              });
             }}
           >
             <EmojiPicker
@@ -194,11 +223,9 @@ export class ConversationWindow extends React.Component<any, any> {
               );
               lastSender = element.meta.sender;
             }
-            if (element.meta.type === "mtype.text") {
-              foo.push(
-                <MessageContainer message={element} key={Math.random()} />
-              );
-            }
+            foo.push(
+              <MessageContainer message={element} key={Math.random()} />
+            );
           });
         }
 
@@ -226,7 +253,7 @@ class AuthorDivider extends React.Component<any> {
           marginTop: "16px",
           marginLeft: "8px",
           marginRight: "8px",
-          marginBottom: "16px"
+          marginBottom: "16px",
         }}
       >
         <Avatar
@@ -235,7 +262,7 @@ class AuthorDivider extends React.Component<any> {
             marginLeft: "16px",
             borderRadius: "16px",
             float: "left",
-            userSelect: "none"
+            userSelect: "none",
           }}
           seed={this.props.author}
         />

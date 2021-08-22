@@ -17,7 +17,12 @@ const createWindow = (): void => {
     width: 800,
     autoHideMenuBar: true,
     title: "Allium",
-    webPreferences: { webSecurity: false },
+    webPreferences: {
+      webSecurity: false,
+      nodeIntegration: true,
+      contextIsolation: false,
+      enableRemoteModule: true,
+    },
   });
 
   //Open external urls in Browser

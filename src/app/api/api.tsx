@@ -1,4 +1,6 @@
 import { IMessageEvent } from "websocket";
+const fs = window.require("electron").remote.require("fs")
+const fetch = window.require("electron").remote.require("node-fetch")
 
 export interface DaemonNotification {
   type: string;
@@ -28,7 +30,7 @@ function apiGET(endpoint: string, form?: Map<string, any>): Promise<Response> {
 
 function apiPOST(
   endpoint: string,
-  data: string,
+  data: any,
   form?: Map<string, any>
 ): Promise<Response> {
   return fetch(constructUrl(endpoint, form), {
@@ -67,19 +69,19 @@ export function fetchRoomMessages(
 }
 
 export function fetchContactIDs(): Promise<Response> {
-  return apiGET("/contact/list")
+  return apiGET("/contact/list");
 }
 
 export function createContactID(): Promise<Response> {
-  return apiGET("/contact/create")
+  return apiGET("/contact/create");
 }
 
 export function deleteContactID(id: string): Promise<Response> {
-  return apiGET("/contact/delete", new Map([["id", id]]))
+  return apiGET("/contact/delete", new Map([["id", id]]));
 }
 
 export function fetchTorinfo(): Promise<Response> {
-  return apiGET("/tor")
+  return apiGET("/tor");
 }
 
 export function postMessageToRoom(
@@ -87,6 +89,19 @@ export function postMessageToRoom(
   data: string
 ): Promise<Response> {
   return apiPOST("/room/send/message", data, new Map([["uuid", uuid]]));
+}
+
+export function postFileToRoom(uuid: string, file: File): Promise<Response> {
+  let stream = fs.createReadStream(file.path);
+  return apiPOST(
+    "/room/send/file",
+    stream,
+    new Map([
+      ["uuid", uuid],
+      ["Content-Filename", file.name],
+      ["Content-Mimetype", file.type],
+    ])
+  );
 }
 
 export function createNewRoom(ids: Array<string>): Promise<Response> {
