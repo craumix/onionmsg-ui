@@ -11,7 +11,7 @@ const apiProto = "http://";
 const baseUrl = "localhost:10052";
 const apiVer = "v1";
 
-function constructUrl(endpoint: string, form?: Map<string, string>): string {
+export function constructAPIUrl(endpoint: string, form?: Map<string, string>): string {
   if (endpoint.startsWith("/")) {
     endpoint = endpoint.substr(1);
   }
@@ -23,7 +23,7 @@ function constructUrl(endpoint: string, form?: Map<string, string>): string {
 }
 
 function apiGET(endpoint: string, form?: Map<string, any>): Promise<Response> {
-  return fetch(constructUrl(endpoint, form), {
+  return fetch(constructAPIUrl(endpoint, form), {
     mode: "no-cors",
   });
 }
@@ -33,7 +33,7 @@ function apiPOST(
   data: any,
   form?: Map<string, any>
 ): Promise<Response> {
-  return fetch(constructUrl(endpoint, form), {
+  return fetch(constructAPIUrl(endpoint, form), {
     mode: "no-cors",
     method: "POST",
     body: data,
