@@ -212,18 +212,17 @@ export class ConversationWindow extends React.Component<any, any> {
         let lastSender = append ? this.state.lastMessageSenderUUID : "";
         if (result != null) {
           result.forEach((element: ChatMessage, index: number) => {
-            //TODO remove usage of Math.random for keys
             if (lastSender != element.meta.sender) {
               foo.push(
                 <AuthorDivider
                   author={element.meta.sender}
-                  key={Math.random()}
+                  key={"author " + element.sig}
                 />
               );
               lastSender = element.meta.sender;
             }
             foo.push(
-              <MessageContainer message={element} key={Math.random()} />
+              <MessageContainer message={element} key={"message " + element.sig} />
             );
           });
         }
