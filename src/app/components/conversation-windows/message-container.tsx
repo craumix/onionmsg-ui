@@ -19,9 +19,7 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
         <p title={this.longTimestamp()} className={styles.messageTimestamp}>
           {this.shortTimestamp()}
         </p>
-        <div className={styles.markdownContainer}>
-          {this.displayComponent()}
-        </div>
+        <div className={styles.contentContainer}>{this.displayComponent()}</div>
       </div>
     );
   }
@@ -35,7 +33,9 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
         //TODO prevent loading ressources from urls
         return (
           <div>
-            <MarkdownContent text={msgText} />
+            <div className={styles.markdownContainer}>
+              <MarkdownContent text={msgText} />
+            </div>
 
             {findYoutubeIDs(msgText).map((id: string) => (
               <YoutubeContainer id={id} key={id} />
@@ -128,7 +128,7 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
                 }}
               >
                 <div className={styles.attachmentIconBox}>
-                  <FaPaperclip style={{ color: "#AAA" }} />
+                  <FaPaperclip style={{ color: "#AAA", width: "auto", height: "auto" }} />
                 </div>
                 {msgContent.meta.filename}
               </div>

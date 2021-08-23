@@ -7,12 +7,14 @@
     border-radius: 4px
     padding-right: 32px
     min-height: 1em
+    border-left: solid 4px white
     &:hover
         background-color: #FAFAFA
+        border-left: solid 4px lightgreen
         .messageTimestamp
             color: #888
 
-.messageTimestamp 
+.messageTimestamp
     float: left
     margin: 0px
     margin-left: 8px
@@ -21,17 +23,19 @@
     color: #FFF
     user-select: none
 
-.markdownContainer
+.contentContainer
     font-size: 14px
     margin-left: 64px
-    * 
+
+.markdownContainer
+    *
         width: auto
         height: auto
         max-width: 100%
         max-height: 100%
         border-radius: 4px
-    > * 
-        margin: 0px;
+    > *
+        margin: 0px
 
 .attachmentIconBox
     width: 20px
