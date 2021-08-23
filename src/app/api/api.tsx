@@ -98,8 +98,8 @@ export function postFileToRoom(uuid: string, file: File): Promise<Response> {
     stream,
     new Map([
       ["uuid", uuid],
-      ["Content-Filename", file.name],
-      ["Content-Mimetype", file.type],
+      ["filename", file.name],
+      ["mimetype", file.type],
     ])
   );
 }

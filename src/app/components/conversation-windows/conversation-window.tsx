@@ -47,7 +47,6 @@ export class ConversationWindow extends React.Component<any, any> {
             Array.from(files).forEach((file) => {
               //TODO add some kind of dialog
               postFileToRoom(this.props.match.params.uuid, file).then((res) => {
-                console.log(res)
                 if (res.ok) {
                   console.log("File sent!");
 

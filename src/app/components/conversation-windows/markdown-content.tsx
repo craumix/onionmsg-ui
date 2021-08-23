@@ -34,6 +34,7 @@ export class MarkdownContent extends React.Component<MarkdownContentProps> {
                   language={match[1]}
                   showLineNumbers={true}
                   PreTag="div"
+                  //Always display at least 1 line even if empty
                   children={
                     String(children).replace(/\n$/, "").length > 0
                       ? String(children).replace(/\n$/, "")

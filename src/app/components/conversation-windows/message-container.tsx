@@ -4,6 +4,9 @@ import styles from "./message-container.sass";
 import { MarkdownContent } from "./markdown-content";
 import { FaPaperclip } from "react-icons/fa";
 import { constructAPIUrl } from "../../api/api";
+import prettyBytes from "pretty-bytes";
+import { findYoutubeIDs } from "../../utils/youtube";
+import { YoutubeContainer } from "./youtube-container";
 
 interface MessageContainerProps {
   message: ChatMessage;
@@ -25,10 +28,20 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
 
   displayComponent(): JSX.Element {
     let msgContent = this.props.message.content;
+    let msgText = decode64(msgContent.data ?? "");
 
     switch (msgContent.type) {
       case "mtype.text":
-        return <MarkdownContent text={decode64(msgContent.data)} />;
+        //TODO prevent loading ressources from urls
+        return (
+          <div>
+            <MarkdownContent text={msgText} />
+
+            {findYoutubeIDs(msgText).map((id: string) => (
+              <YoutubeContainer id={id} key={id} />
+            ))}
+          </div>
+        );
       case "mtype.cmd":
         return (
           <p
@@ -37,9 +50,11 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
               color: "grey",
             }}
           >
-            {"Command: " + decode64(msgContent.data)}
+            {"Command: " + msgText}
           </p>
         );
+
+      //TODO move this to a component
       case "mtype.file":
         let blobUrl = constructAPIUrl(
           "/blob",
@@ -57,7 +72,11 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
               textDecoration: "none",
             }}
           >
-            Download {msgContent.meta.filename}
+            Download{" "}
+            {msgContent.meta.filename +
+              " (" +
+              prettyBytes(msgContent.meta.filesize ?? 0) +
+              ")"}
           </a>
         );
 
@@ -97,8 +116,21 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
             break;
           default:
             mainFileElement = (
-              <div className={styles.attachmentIconBox}>
-                <FaPaperclip style={{ color: "#AAA" }} />
+              <div
+                style={{
+                  width: "fit-content",
+                  height: "32px",
+                  lineHeight: "32px",
+                  backgroundColor: "#DDD",
+                  color: "#444",
+                  borderRadius: "8px",
+                  padding: "4px",
+                }}
+              >
+                <div className={styles.attachmentIconBox}>
+                  <FaPaperclip style={{ color: "#AAA" }} />
+                </div>
+                {msgContent.meta.filename}
               </div>
             );
         }

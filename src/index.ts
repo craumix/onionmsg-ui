@@ -46,14 +46,15 @@ const createWindow = (): void => {
 // Some APIs can only be used after this event occurs.
 app.on("ready", createWindow);
 
-//Fix later and remove wildcard
+//TODO Fix later and remove wildcard
 app.on("ready", () => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
         "Content-Security-Policy": [
-          "default-src 'self' * 'unsafe-inline' data:; script-src 'self' 'unsafe-eval' 'unsafe-inline' data:",
+          "default-src 'self' * 'unsafe-inline' data: blob: ;" +
+            "script-src 'self' * 'unsafe-eval' 'unsafe-inline' data: ;",
         ],
       },
     });

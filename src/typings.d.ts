@@ -18,6 +18,7 @@ interface ContentMeta {
   blobUUID: string;
   filename: string;
   mimetype: string;
+  filesize: number;
 }
 
 interface ChatMessage {
