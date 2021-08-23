@@ -6,6 +6,11 @@ body {
   padding: 2rem;
 }
 
+//TODO this ***** accessibility
+*:focus {
+  outline: none;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;

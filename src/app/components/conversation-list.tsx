@@ -1,9 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { fetchRoomList } from "../api/api";
+import { deleteRoom, fetchRoomList } from "../api/api";
 import styles from "./conversation-list.sass";
 import { BsThreeDots } from "react-icons/bs";
 import { FaCog, FaDoorOpen } from "react-icons/fa";
+import { Dropdown } from "./dropdown";
 
 interface ConversationInfo {
   uuid: string;
@@ -98,19 +99,20 @@ interface ConversationListElementProps {
 
 interface ConversationListElementState {
   selected: boolean;
-  dialogOpened: boolean;
 }
 
 class ConversationListElement extends React.Component<
   ConversationListElementProps,
   ConversationListElementState
 > {
+  dropdownRef: React.RefObject<Dropdown>;
   constructor(props: ConversationListElementProps) {
     super(props);
     this.state = {
       selected: false,
-      dialogOpened: false,
     };
+
+    this.dropdownRef = React.createRef();
   }
 
   render(): JSX.Element {
@@ -151,61 +153,37 @@ class ConversationListElement extends React.Component<
           }}
           onClick={(event: React.MouseEvent<HTMLElement>) => {
             event.nativeEvent.preventDefault();
-            this.setState({
-              dialogOpened: true,
+            this.dropdownRef.current.setState({
+              visible: true,
             });
           }}
         >
           <BsThreeDots />
         </button>
-        {this.state.dialogOpened && (
-          <div>
-            <div
-              style={{
-                position: "fixed",
-                width: "100%",
-                height: "100%",
-                top: "0px",
-                left: "0px",
-                zIndex: 1,
-              }}
-              onClick={(event) => {
-                event.nativeEvent.preventDefault();
-                this.setState({
-                  dialogOpened: false,
-                });
-              }}
-            />
+        <Dropdown
+          ref={this.dropdownRef}
+          entries={[
             {
-              //TODO make this into a dedicated component
-            }
-            <div
-              style={{
-                position: "absolute",
-                top: "30px",
-                right: "10px",
-                backgroundColor: "white",
-                borderRadius: "4px",
-                filter: "drop-shadow(0 0 0.25rem grey)",
-                zIndex: 2,
-              }}
-            >
-              <button className={styles.dialogMenuEntry}>
-                <p>
-                  <FaCog /> Settings
-                </p>
-              </button>
-              <hr
-                style={{ margin: "0px", borderRadius: "0px", color: "#EEE" }}
-              />
-              <button className={styles.dialogMenuEntry}>
-                <p style={{ color: "#F44" }}>
-                  <FaDoorOpen /> Leave Room
-                </p>
-              </button>
-            </div>
-          </div>
-        )}
+              element: <p>Hello there!</p>,
+              spacer: true,
+            },
+            {
+              onClick: () => {
+                deleteRoom(this.props.info.uuid)
+                .then(res => res.text())
+                .then(msg => {
+                  console.log("Delete Room: " + msg)
+                })
+              },
+              element: (
+                <div style={{ color: "#F00" }}>
+                  <FaDoorOpen style={{ float: "left" }} />
+                  <p>Leave</p>
+                </div>
+              ),
+            },
+          ]}
+        />
       </li>
     );
   }

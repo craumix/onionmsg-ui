@@ -104,6 +104,10 @@ export function postFileToRoom(uuid: string, file: File): Promise<Response> {
   );
 }
 
+export function deleteRoom(uuid: string): Promise<Response> {
+  return apiGET("/room/delete", new Map([["uuid", uuid]]));
+}
+
 export function createNewRoom(ids: Array<string>): Promise<Response> {
   return apiPOST("/room/create", JSON.stringify(ids));
 }
