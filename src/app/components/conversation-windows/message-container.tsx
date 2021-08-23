@@ -53,95 +53,8 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
             {"Command: " + msgText}
           </p>
         );
-
-      //TODO move this to a component
       case "mtype.file":
-        let blobUrl = constructAPIUrl(
-          "/blob",
-          new Map([
-            ["uuid", msgContent.meta.blobUUID],
-            ["filename", msgContent.meta.filename],
-          ])
-        );
-
-        let fileFooter = (
-          <a
-            href={blobUrl}
-            download={msgContent.meta.filename}
-            style={{
-              textDecoration: "none",
-            }}
-          >
-            Download{" "}
-            {msgContent.meta.filename +
-              " (" +
-              prettyBytes(msgContent.meta.filesize ?? 0) +
-              ")"}
-          </a>
-        );
-
-        let mainFileElement: JSX.Element;
-        switch (msgContent.meta.mimetype?.split("/")[0]) {
-          case "image":
-            mainFileElement = <img src={blobUrl} />;
-            break;
-          case "video":
-            mainFileElement = (
-              <video
-                controls
-                controlsList="nodownload noremoteplayback"
-                disablePictureInPicture
-                preload="metadata"
-              >
-                <source src={blobUrl} type={msgContent.meta.mimetype} />
-                The format {msgContent.meta.mimetype} is not supported!
-              </video>
-            );
-            break;
-          case "audio":
-            mainFileElement = (
-              <audio
-                controls
-                controlsList="nodownload"
-                style={{
-                  height: "48px",
-                  width: "384px",
-                }}
-                preload="metadata"
-              >
-                <source src={blobUrl} type={msgContent.meta.mimetype} />
-                The format {msgContent.meta.mimetype} is not supported!
-              </audio>
-            );
-            break;
-          default:
-            mainFileElement = (
-              <div
-                style={{
-                  width: "fit-content",
-                  height: "32px",
-                  lineHeight: "32px",
-                  backgroundColor: "#DDD",
-                  color: "#444",
-                  borderRadius: "8px",
-                  padding: "4px",
-                }}
-              >
-                <div className={styles.attachmentIconBox}>
-                  <FaPaperclip style={{ color: "#AAA" }} />
-                </div>
-                {msgContent.meta.filename}
-              </div>
-            );
-        }
-
-        return (
-          <div>
-            {mainFileElement}
-            <br />
-            {fileFooter}
-          </div>
-        );
+        return <FileMessageContainer msgContent={this.props.message.content} />
       default:
         return <p>{JSON.stringify(this.props.message)}</p>;
     }
@@ -160,5 +73,106 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
 
   longTimestamp(): string {
     return this.messageDate().toLocaleString();
+  }
+}
+
+interface FileMessageContainerProps {
+  msgContent: MessageContent;
+}
+
+class FileMessageContainer extends React.Component<FileMessageContainerProps> {
+  blobUrl: string;
+
+  constructor(props: FileMessageContainerProps) {
+    super(props);
+
+    this.blobUrl = constructAPIUrl(
+      "/blob",
+      new Map([
+        ["uuid", this.props.msgContent.meta.blobUUID],
+        ["filename", this.props.msgContent.meta.filename],
+      ])
+    );
+  }
+
+  render(): JSX.Element {
+    return (
+      <div>
+        {this.filePreview()}
+        <br />
+        <a
+          href={this.blobUrl}
+          download={this.props.msgContent.meta.filename}
+          style={{
+            textDecoration: "none",
+          }}
+        >
+          Download{" "}
+          {this.props.msgContent.meta.filename +
+            " (" +
+            prettyBytes(this.props.msgContent.meta.filesize ?? 0) +
+            ")"}
+        </a>
+      </div>
+    );
+  }
+
+  filePreview(): JSX.Element {
+    switch (this.props.msgContent.meta.mimetype?.split("/")[0]) {
+      case "image":
+        return <img src={this.blobUrl} />;
+      case "video":
+        return (
+          <video
+            controls
+            controlsList="nodownload noremoteplayback"
+            disablePictureInPicture
+            preload="metadata"
+          >
+            <source
+              src={this.blobUrl}
+              type={this.props.msgContent.meta.mimetype}
+            />
+            The format {this.props.msgContent.meta.mimetype} is not supported!
+          </video>
+        );
+      case "audio":
+        return (
+          <audio
+            controls
+            controlsList="nodownload"
+            style={{
+              height: "48px",
+              width: "384px",
+            }}
+            preload="metadata"
+          >
+            <source
+              src={this.blobUrl}
+              type={this.props.msgContent.meta.mimetype}
+            />
+            The format {this.props.msgContent.meta.mimetype} is not supported!
+          </audio>
+        );
+      default:
+        return (
+          <div
+            style={{
+              width: "fit-content",
+              height: "32px",
+              lineHeight: "32px",
+              backgroundColor: "#DDD",
+              color: "#444",
+              borderRadius: "8px",
+              padding: "4px",
+            }}
+          >
+            <div className={styles.attachmentIconBox}>
+              <FaPaperclip style={{ color: "#AAA" }} />
+            </div>
+            {this.props.msgContent.meta.filename}
+          </div>
+        );
+    }
   }
 }
