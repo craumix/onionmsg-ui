@@ -36,7 +36,6 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
             <div className={styles.markdownContainer}>
               <MarkdownContent text={msgText} />
             </div>
-
             {findYoutubeIDs(msgText).map((id: string) => (
               <YoutubeContainer id={id} key={id} />
             ))}
@@ -54,7 +53,7 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
           </p>
         );
       case "mtype.file":
-        return <FileMessageContainer msgContent={this.props.message.content} />
+        return <FileMessageContainer msgContent={this.props.message.content} />;
       default:
         return <p>{JSON.stringify(this.props.message)}</p>;
     }

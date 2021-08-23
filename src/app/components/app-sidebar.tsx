@@ -2,8 +2,8 @@ import React from "react";
 import { ConversationList } from "./conversation-list";
 import styles from "./app-sidebar.sass";
 import { FaPlus, FaServer } from "react-icons/fa";
-import { ContactMenu } from "./contact-menu";
-import { BackendInfo } from "./backend-info";
+import { ContactMenu } from "./overlay/contact-menu";
+import { BackendInfo } from "./overlay/backend-info";
 
 interface AppSidebarState {
   conversationListRef: React.RefObject<ConversationList>

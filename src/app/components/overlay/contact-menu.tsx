@@ -7,7 +7,7 @@ import {
   createNewRoom,
   deleteContactID,
   fetchContactIDs,
-} from "../api/api";
+} from "../../api/api";
 import {
   FaCopy,
   FaSyncAlt,

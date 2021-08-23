@@ -1,5 +1,5 @@
 import React from "react";
-import { fetchTorinfo } from "../api/api";
+import { fetchTorinfo } from "../../api/api";
 import { AppOverlayMenu } from "./app-overlay";
 import styles from "./backend-info.sass";
 import { SiTor } from "react-icons/si";
