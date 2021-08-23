@@ -78,9 +78,17 @@ export class YoutubeContainer extends React.Component<
               }}
             />
           ) : (
-            <div style={{
-                position: "relative"
-            }}>
+            <div
+              style={{
+                position: "relative",
+                cursor: "pointer",
+              }}
+              onClick={() =>
+                this.setState({
+                  showVideo: true,
+                })
+              }
+            >
               <img
                 src={this.state.videoMeta?.thumbnail_url}
                 style={{
@@ -89,16 +97,9 @@ export class YoutubeContainer extends React.Component<
                   maxHeight: "100%",
                 }}
               />
-              <button
-                className={styles.playButton}
-                onClick={() =>
-                  this.setState({
-                    showVideo: true,
-                  })
-                }
-              >
-                <FaPlay size="24"/>
-              </button>
+              <div className={styles.playButton}>
+                <FaPlay size="24" />
+              </div>
             </div>
           )}
         </div>
