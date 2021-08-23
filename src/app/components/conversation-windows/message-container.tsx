@@ -128,7 +128,7 @@ export class MessageContainer extends React.Component<MessageContainerProps> {
                 }}
               >
                 <div className={styles.attachmentIconBox}>
-                  <FaPaperclip style={{ color: "#AAA", width: "auto", height: "auto" }} />
+                  <FaPaperclip style={{ color: "#AAA" }} />
                 </div>
                 {msgContent.meta.filename}
               </div>
