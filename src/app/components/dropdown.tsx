@@ -2,7 +2,7 @@ import React from "react";
 import styles from "./dropdown.sass";
 
 export interface DropdownEntry {
-  onClick?: (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void;
+  onClick?: () => void;
   element: JSX.Element;
   spacer?: boolean;
 }
@@ -54,20 +54,27 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
             borderRadius: "4px",
             filter: "drop-shadow(0 0 0.25rem grey)",
             zIndex: 2,
-            fontSize: "18"
+            width: "fit-content",
           }}
         >
           {this.props.entries.map((entry: DropdownEntry, index: number) => (
-            <div key={index}>
-              <button
-                onClick={entry.onClick}
-                className={styles.dialogMenuEntry}
+            <div
+              key={index}
+              onClick={entry.onClick}
+              className={styles.dialogMenuEntry}
+            >
+              <div
+                style={{
+                  padding: "8px",
+                  paddingTop: "2px",
+                  paddingBottom: "2px",
+                }}
               >
                 {entry.element}
-              </button>
+              </div>
               {entry.spacer && (
                 <hr
-                  style={{ margin: "0px", borderRadius: "0px", color: "#EEE" }}
+                  style={{ margin: "2px", borderRadius: "0px", color: "#EEE" }}
                 />
               )}
             </div>

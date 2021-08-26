@@ -164,21 +164,26 @@ class ConversationListElement extends React.Component<
           ref={this.dropdownRef}
           entries={[
             {
-              element: <p>Hello there!</p>,
+              element: (
+                <div>
+                  <FaCog style={{ float: "left" }} />
+                  <p>Settings</p>
+                </div>
+              ),
               spacer: true,
             },
             {
               onClick: () => {
                 deleteRoom(this.props.info.uuid)
-                .then(res => res.text())
-                .then(msg => {
-                  console.log("Delete Room: " + msg)
-                })
+                  .then((res) => res.text())
+                  .then((msg) => {
+                    console.log("Delete Room: " + msg);
+                  });
               },
               element: (
                 <div style={{ color: "#F00" }}>
                   <FaDoorOpen style={{ float: "left" }} />
-                  <p>Leave</p>
+                  <p>Leave Room</p>
                 </div>
               ),
             },
