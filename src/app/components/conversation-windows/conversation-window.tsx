@@ -256,13 +256,13 @@ class AuthorDivider extends React.Component<any> {
       >
         <Avatar
           style={{
-            width: "32px",
             marginLeft: "16px",
             borderRadius: "16px",
             float: "left",
             userSelect: "none",
           }}
           seed={this.props.author}
+          size={32}
         />
         <p
           style={{
