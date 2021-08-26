@@ -26,7 +26,7 @@
  * ```
  */
 
-import "./index.css";
+import "./index.sass";
 import "./app/app.tsx";
 
 console.log(
