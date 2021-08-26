@@ -69,8 +69,6 @@ export class YoutubeContainer extends React.Component<
               videoId={this.props.id}
               className={styles.videoFrame}
               opts={{
-                width: "100%",
-                height: "100%",
                 playerVars: {
                   autoplay: 1,
                   modestbranding: 1,

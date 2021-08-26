@@ -257,7 +257,7 @@ class AuthorDivider extends React.Component<any> {
         <Avatar
           style={{
             marginLeft: "16px",
-            borderRadius: "16px",
+            marginBottom: "-8px",
             float: "left",
             userSelect: "none",
           }}
