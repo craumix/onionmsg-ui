@@ -2,16 +2,18 @@ import React from "react";
 import { decode as decode64 } from "js-base64";
 import styles from "./message-container.sass";
 import { MarkdownContent } from "./markdown-content";
-import { FaCode, FaPaperclip, FaReply } from "react-icons/fa";
+import { FaCode, FaPaperclip, FaQuoteLeft, FaReply } from "react-icons/fa";
 import { constructAPIUrl } from "../../api/api";
 import prettyBytes from "pretty-bytes";
 import { findYoutubeIDs } from "../../utils/youtube";
 import { YoutubeContainer } from "./youtube-container";
 import { BsThreeDots } from "react-icons/bs";
-import { Dropdown } from "../dropdown";
+import { Dropdown, DropdownEntry } from "../dropdown";
+import { ConversationWindow } from "./conversation-window";
 
 interface MessageContainerProps {
   message: ChatMessage;
+  convWindow: ConversationWindow;
 }
 
 interface MessageContainerState {
@@ -27,14 +29,46 @@ export class MessageContainer extends React.Component<
   constructor(props: MessageContainerProps) {
     super(props);
 
-    this.state = ({
+    this.state = {
       optionsDropdownVisible: false,
-    });
+    };
 
     this.optionsDropdownRef = React.createRef();
   }
 
   render(): JSX.Element {
+    let dropdownEntries: DropdownEntry[] = [
+      {
+        element: (
+          <div>
+            <FaCode style={{ float: "left" }} />
+            <p>Message Source</p>
+          </div>
+        ),
+      },
+    ];
+
+    if (this.props.message.content.type === "mtype.text") {
+      dropdownEntries.push({
+        onClick: () => {
+          let newText =
+            this.decodedMessageText().replace(/^/gm, "> ") +
+            "\n\n" +
+            this.props.convWindow.state.messageInput;
+
+          this.props.convWindow.setState({
+            messageInput: newText,
+          });
+        },
+        element: (
+          <div>
+            <FaQuoteLeft style={{ float: "left" }} />
+            <p>Quote</p>
+          </div>
+        ),
+      });
+    }
+
     return (
       <div
         className={`${styles.messageContainer} ${
@@ -68,16 +102,7 @@ export class MessageContainer extends React.Component<
             });
           }}
           ref={this.optionsDropdownRef}
-          entries={[
-            {
-              element: (
-                <div>
-                  <FaCode style={{ float: "left" }} />
-                  <p>Message Source</p>
-                </div>
-              ),
-            },
-          ]}
+          entries={dropdownEntries}
         />
         <p title={this.longTimestamp()} className={styles.messageTimestamp}>
           {this.shortTimestamp()}
@@ -87,9 +112,12 @@ export class MessageContainer extends React.Component<
     );
   }
 
+  decodedMessageText(): string {
+    return decode64(this.props.message.content.data ?? "");
+  }
+
   displayComponent(): JSX.Element {
     let msgContent = this.props.message.content;
-    let msgText = decode64(msgContent.data ?? "");
 
     switch (msgContent.type) {
       case "mtype.text":
@@ -97,9 +125,9 @@ export class MessageContainer extends React.Component<
         return (
           <div>
             <div className={styles.markdownContainer}>
-              <MarkdownContent text={msgText} />
+              <MarkdownContent text={this.decodedMessageText()} />
             </div>
-            {findYoutubeIDs(msgText).map((id: string) => (
+            {findYoutubeIDs(this.decodedMessageText()).map((id: string) => (
               <YoutubeContainer id={id} key={id} />
             ))}
           </div>
@@ -112,7 +140,7 @@ export class MessageContainer extends React.Component<
               color: "grey",
             }}
           >
-            {"Command: " + msgText}
+            {"Command: " + this.decodedMessageText()}
           </p>
         );
       case "mtype.file":

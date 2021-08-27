@@ -222,7 +222,7 @@ export class ConversationWindow extends React.Component<any, any> {
               lastSender = element.meta.sender;
             }
             foo.push(
-              <MessageContainer message={element} key={"message " + element.sig} />
+              <MessageContainer convWindow={this} message={element} key={"message " + element.sig} />
             );
           });
         }
