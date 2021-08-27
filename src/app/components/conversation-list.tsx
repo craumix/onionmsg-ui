@@ -153,14 +153,14 @@ class ConversationListElement extends React.Component<
           }}
           onClick={(event: React.MouseEvent<HTMLElement>) => {
             event.nativeEvent.preventDefault();
-            this.dropdownRef.current.setState({
-              visible: true,
-            });
+            this.dropdownRef.current.show()
           }}
         >
           <BsThreeDots />
         </button>
         <Dropdown
+          top="30px"
+          right="10px"
           ref={this.dropdownRef}
           entries={[
             {

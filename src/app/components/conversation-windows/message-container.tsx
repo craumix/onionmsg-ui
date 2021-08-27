@@ -2,20 +2,83 @@ import React from "react";
 import { decode as decode64 } from "js-base64";
 import styles from "./message-container.sass";
 import { MarkdownContent } from "./markdown-content";
-import { FaPaperclip } from "react-icons/fa";
+import { FaCode, FaPaperclip, FaReply } from "react-icons/fa";
 import { constructAPIUrl } from "../../api/api";
 import prettyBytes from "pretty-bytes";
 import { findYoutubeIDs } from "../../utils/youtube";
 import { YoutubeContainer } from "./youtube-container";
+import { BsThreeDots } from "react-icons/bs";
+import { Dropdown } from "../dropdown";
 
 interface MessageContainerProps {
   message: ChatMessage;
 }
 
-export class MessageContainer extends React.Component<MessageContainerProps> {
+interface MessageContainerState {
+  optionsDropdownVisible: boolean;
+}
+
+export class MessageContainer extends React.Component<
+  MessageContainerProps,
+  MessageContainerState
+> {
+  optionsDropdownRef: React.RefObject<Dropdown>;
+
+  constructor(props: MessageContainerProps) {
+    super(props);
+
+    this.state = ({
+      optionsDropdownVisible: false,
+    });
+
+    this.optionsDropdownRef = React.createRef();
+  }
+
   render(): JSX.Element {
     return (
-      <div className={styles.messageContainer}>
+      <div
+        className={`${styles.messageContainer} ${
+          this.state?.optionsDropdownVisible ? styles.dropdownVisible : ""
+        }`}
+      >
+        <div className={styles.messageOptionsMenu}>
+          <button title="Reply">
+            <FaReply />
+          </button>
+          <button
+            onClick={() => {
+              this.optionsDropdownRef.current.show();
+            }}
+            title="Options"
+          >
+            <BsThreeDots />
+          </button>
+        </div>
+        <Dropdown
+          top="4px"
+          right="8px"
+          onShow={() => {
+            this.setState({
+              optionsDropdownVisible: true,
+            });
+          }}
+          onHide={() => {
+            this.setState({
+              optionsDropdownVisible: false,
+            });
+          }}
+          ref={this.optionsDropdownRef}
+          entries={[
+            {
+              element: (
+                <div>
+                  <FaCode style={{ float: "left" }} />
+                  <p>Message Source</p>
+                </div>
+              ),
+            },
+          ]}
+        />
         <p title={this.longTimestamp()} className={styles.messageTimestamp}>
           {this.shortTimestamp()}
         </p>

@@ -9,6 +9,10 @@ export interface DropdownEntry {
 
 interface DropdownProps {
   entries: DropdownEntry[];
+  onShow?: () => void;
+  onHide?: () => void;
+  top?: string;
+  right?: string;
 }
 
 interface DropdownState {
@@ -24,14 +28,26 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
     };
   }
 
+  show(): void {
+    this.setState({
+      visible: true,
+    });
+    if (this.props.onShow) this.props.onShow();
+  }
+
+  hide(): void {
+    this.setState({
+      visible: false,
+    });
+    if (this.props.onHide) this.props.onHide();
+  }
+
   render(): JSX.Element {
     return this.state.visible ? (
       <div
         onClick={(event) => {
           event.nativeEvent.preventDefault();
-          this.setState({
-            visible: false,
-          });
+          this.hide()
         }}
       >
         <div
@@ -48,11 +64,11 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
         <div
           style={{
             position: "absolute",
-            top: "30px",
-            right: "10px",
+            top: this.props.top ?? "0px",
+            right: this.props.right ?? "0px",
             backgroundColor: "white",
             borderRadius: "4px",
-            filter: "drop-shadow(0 0 0.25rem grey)",
+            filter: "drop-shadow(0 0 0.25rem lightgrey)",
             zIndex: 2,
             width: "fit-content",
           }}

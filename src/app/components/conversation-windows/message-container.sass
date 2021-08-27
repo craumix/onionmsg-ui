@@ -1,18 +1,20 @@
 .messageContainer
+    position: relative
     width: auto
     height: fit-content
     margin-left: 8px
     margin-right: 64px
-    margin-top: 8px
     border-radius: 4px
     padding-right: 32px
     min-height: 1em
     border-left: solid 4px white
-    &:hover
+    &:hover, &.dropdownVisible
         background-color: #FAFAFA
         border-left: solid 4px blueviolet
         .messageTimestamp
             color: #888
+        .messageOptionsMenu
+            visibility: visible
 
 .messageTimestamp
     float: left
@@ -46,3 +48,24 @@
     float: left
     background-color: #FFF
     margin-right: 8px
+
+.messageOptionsMenu
+    visibility: hidden
+    position: absolute
+    right: 8px
+    top: -1.75em
+    filter: drop-shadow(0 0 0.15rem lightgrey)
+    border-radius: 4px
+    border: 2px solid #FFF
+    box-sizing: border-box
+    background-color: #FFF
+    z-index: 1
+    > *
+        background-color: #FFF
+    button
+        padding: 0px
+        width: 1.75em
+        height: 1.75em
+        border-radius: 4px
+        &:hover
+            background-color: #EEE
