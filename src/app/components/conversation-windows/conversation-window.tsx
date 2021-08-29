@@ -200,8 +200,8 @@ export class ConversationWindow extends React.Component<any, any> {
     );
   }
 
-  loadNextMessage(): void {
-    this.loadNewMessages(true, 1).then(() => this.scrollMessageContainerDown());
+  loadNextMessage(count?: number): void {
+    this.loadNewMessages(true, count ?? 1).then(() => this.scrollMessageContainerDown());
   }
 
   loadNewMessages(append: boolean, count?: number): Promise<void> {

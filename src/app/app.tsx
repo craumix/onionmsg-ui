@@ -20,10 +20,10 @@ function render() {
       if (
         ConversationWindowRef.current &&
         ConversationWindowRef.current.props.match.params.uuid ===
-          notification.data.uuid
+          notification.data[0].uuid
       ) {
         console.log("callback");
-        ConversationWindowRef.current.loadNextMessage();
+        ConversationWindowRef.current.loadNextMessage(notification.data.length);
       }
     } else if (notification.type === "NewRoom") {
       AppSidebarRef.current.state.conversationListRef.current.appendRoom(notification.data)
