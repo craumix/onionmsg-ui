@@ -40,8 +40,6 @@ export class MarkdownContent extends React.Component<MarkdownContentProps> {
                       ? String(children).replace(/\n$/, "")
                       : " "
                   }
-                  //TODO determine if these are needed
-                  //{...props}
                 />
                 <button
                   title="Copy"

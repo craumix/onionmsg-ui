@@ -10,6 +10,7 @@ import { YoutubeContainer } from "./youtube-container";
 import { BsThreeDots } from "react-icons/bs";
 import { Dropdown, DropdownEntry } from "../dropdown";
 import { ConversationWindow } from "./conversation-window";
+import { MessageSource } from "../overlay/message-source";
 
 interface MessageContainerProps {
   message: ChatMessage;
@@ -25,6 +26,7 @@ export class MessageContainer extends React.Component<
   MessageContainerState
 > {
   optionsDropdownRef: React.RefObject<Dropdown>;
+  messageSourceRef: React.RefObject<MessageSource>;
 
   constructor(props: MessageContainerProps) {
     super(props);
@@ -34,6 +36,7 @@ export class MessageContainer extends React.Component<
     };
 
     this.optionsDropdownRef = React.createRef();
+    this.messageSourceRef = React.createRef();
   }
 
   render(): JSX.Element {
@@ -45,6 +48,9 @@ export class MessageContainer extends React.Component<
             <p>Message Source</p>
           </div>
         ),
+        onClick: () => {
+          this.messageSourceRef.current.show()
+        }
       },
     ];
 
@@ -103,6 +109,10 @@ export class MessageContainer extends React.Component<
           }}
           ref={this.optionsDropdownRef}
           entries={dropdownEntries}
+        />
+        <MessageSource
+          ref={this.messageSourceRef}
+          message={this.props.message}
         />
         <p title={this.longTimestamp()} className={styles.messageTimestamp}>
           {this.shortTimestamp()}
