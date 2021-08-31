@@ -1,7 +1,7 @@
 import React from "react";
 import { ConversationList } from "./conversation-list";
 import styles from "./app-sidebar.sass";
-import { FaPlus, FaServer } from "react-icons/fa";
+import { FaCog, FaPlus, FaServer } from "react-icons/fa";
 import { ContactMenu } from "./overlay/contact-menu";
 import { BackendInfo } from "./overlay/backend-info";
 
@@ -26,14 +26,14 @@ export class AppSidebar extends React.Component<unknown, AppSidebarState> {
       <div className={styles.sidebarContainer}>
         <ContactMenu ref={this.state.contactMenuRef} />
         <BackendInfo ref={this.state.backendInfoRef} />
-        <div>
+        <div className={styles.buttonContainer}>
           <button
             className={styles.sidebarButton}
             onClick={() => {
-              this.state.contactMenuRef.current.show();
+              console.log("Show settings :)");
             }}
           >
-            <FaPlus size="18" />
+            <FaCog size="18" />
           </button>
           <button
             className={styles.sidebarButton}
@@ -43,11 +43,22 @@ export class AppSidebar extends React.Component<unknown, AppSidebarState> {
           >
             <FaServer size="18" />
           </button>
+          <button
+            className={styles.sidebarButton}
+            style={{
+              marginLeft: "auto"
+            }}
+            onClick={() => {
+              this.state.contactMenuRef.current.show();
+            }}
+          >
+            <FaPlus size="18" />
+          </button>
         </div>
 
         <div className={styles.searchInputContainer}>
           <input
-            placeholder="Search"
+            placeholder="Filter all conversations"
             className={styles.searchInput}
             type="text"
           />

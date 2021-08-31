@@ -57,7 +57,7 @@ export class ConversationList extends React.Component<
           padding: "0px 4px",
           width: "100%",
           boxSizing: "border-box",
-          margin: "8px 0px",
+          margin: "4px 0px",
         }}
       >
         {this.state.listElements}
