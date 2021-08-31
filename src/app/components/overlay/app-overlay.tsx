@@ -24,8 +24,16 @@ export class AppOverlayMenu extends React.Component<any, AppOverlayMenuState> {
               visible: false,
             })
           }
-        />
-        <div className={styles.embeddedMenu}>{this.props.children}</div>
+        >
+          <div
+            className={styles.embeddedMenu}
+            onClick={(event) => {
+              event.stopPropagation();
+            }}
+          >
+            {this.props.children}
+          </div>
+        </div>
       </div>
     ) : null;
   }

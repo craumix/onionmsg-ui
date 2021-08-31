@@ -20,7 +20,7 @@ function render() {
       if (
         ConversationWindowRef.current &&
         ConversationWindowRef.current.props.match.params.uuid ===
-          notification.data[0].uuid
+          notification.data.uuid
       ) {
         console.log("callback");
         ConversationWindowRef.current.loadNextMessage(notification.data.length);

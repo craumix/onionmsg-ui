@@ -51,7 +51,7 @@ export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
           <br />
           PID: {this.state.tor.pid}
         </p>
-        <p className={styles.logContainer}>{this.state.tor.log}</p>
+        <pre className={styles.logContainer}>{this.state.tor.log}</pre>
       </AppOverlayMenu>
     );
   }
