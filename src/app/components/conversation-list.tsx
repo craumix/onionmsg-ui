@@ -5,6 +5,7 @@ import styles from "./conversation-list.sass";
 import { BsThreeDots } from "react-icons/bs";
 import { FaCog, FaDoorOpen } from "react-icons/fa";
 import { Dropdown } from "./dropdown";
+import { Avatar } from "./avatar";
 
 interface ConversationInfo {
   uuid: string;
@@ -53,7 +54,10 @@ export class ConversationList extends React.Component<
       <ul
         style={{
           listStyle: "none",
-          padding: "0px",
+          padding: "0px 4px",
+          width: "100%",
+          boxSizing: "border-box",
+          margin: "8px 0px",
         }}
       >
         {this.state.listElements}
@@ -117,78 +121,85 @@ class ConversationListElement extends React.Component<
 
   render(): JSX.Element {
     return (
+      //FIXME
       <li
         className={`
       ${styles.listEntry} 
       ${this.state.selected ? styles.selectedEntry : ""}
       `}
-        style={{ position: "relative" }}
       >
         <Link
-          style={{
-            textDecoration: "none",
-            color: "black",
-          }}
+          className={styles.entryLinkContainer}
           to={"/c/" + this.props.info.uuid}
+          onClick={() => {
+            this.props.parent.setSelectedElement(this);
+          }}
         >
+          <Avatar
+            style={{
+              width: "fit-content",
+              height: "fit-content",
+            }}
+            size={32}
+            seed={this.props.info.uuid}
+            variant="marble"
+          />
           <p
             style={{
-              marginTop: "4px",
-              marginBottom: "4px",
-            }}
-            onClick={() => {
-              this.props.parent.setSelectedElement(this);
+              margin: "0px",
+              marginLeft: "8px",
             }}
           >
             {this.props.info.name ?? this.props.info.uuid?.split("-")[0]}
           </p>
+          <button
+            style={{
+              height: "20px",
+              background: "none",
+              marginLeft: "auto",
+              marginRight: "10px"
+            }}
+            onClick={(event: React.MouseEvent<HTMLElement>) => {
+              event.nativeEvent.preventDefault();
+              this.dropdownRef.current.show();
+            }}
+          >
+            <BsThreeDots />
+          </button>
         </Link>
-        <button
-          style={{
-            position: "absolute",
-            top: "10px",
-            right: "10px",
-            height: "20px",
-            background: "none",
-          }}
-          onClick={(event: React.MouseEvent<HTMLElement>) => {
-            event.nativeEvent.preventDefault();
-            this.dropdownRef.current.show()
-          }}
-        >
-          <BsThreeDots />
-        </button>
-        <Dropdown
-          top="30px"
-          right="10px"
-          ref={this.dropdownRef}
-          entries={[
-            {
-              element: (
-                <div>
-                  <FaCog style={{ float: "left" }} />
-                  <p>Settings</p>
-                </div>
-              ),
-              spacer: true,
-            },
-            {
-              onClick: () => {
-                deleteRoom(this.props.info.uuid)
-                  .then((res) => res.text())
-                  .then((msg) => {
-                    console.log("Delete Room: " + msg);
-                  });
+        <div style={{ position: "relative" }}>
+          <Dropdown
+            top="-15px"
+            right="10px"
+            ref={this.dropdownRef}
+            entries={[
+              {
+                element: (
+                  <div>
+                    <FaCog style={{ float: "left" }} />
+                    <p>Settings</p>
+                  </div>
+                ),
+                spacer: true,
               },
-              element: (
-                <div style={{ color: "#F00" }}>
-                  <FaDoorOpen style={{ float: "left" }} />
-                  <p>Leave Room</p>
-                </div>
-              ),
-            },
-          ]}
-        />
+              {
+                onClick: () => {
+                  deleteRoom(this.props.info.uuid)
+                    .then((res) => res.text())
+                    .then((msg) => {
+                      console.log("Delete Room: " + msg);
+                    });
+                },
+                element: (
+                  <div style={{ color: "#F00" }}>
+                    <FaDoorOpen style={{ float: "left" }} />
+                    <p>Leave Room</p>
+                  </div>
+                ),
+              },
+            ]}
+          />
+        </div>
       </li>
     );
   }
