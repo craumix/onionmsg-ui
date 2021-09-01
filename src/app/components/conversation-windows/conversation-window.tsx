@@ -12,10 +12,12 @@ import styles from "./conversation-window.sass";
 import { FaPaperclip, FaUpload } from "react-icons/fa";
 import { BiSticker } from "react-icons/bi";
 import { GrEmoji } from "react-icons/gr";
+import { ConversationSettings } from "../overlay/conversation-settings";
 const dialog = window.require("electron").remote.dialog;
 
 export class ConversationWindow extends React.Component<any, any> {
   messagesEndRef: React.RefObject<HTMLDivElement>;
+  convSettingsRef: React.RefObject<ConversationSettings>;
 
   constructor(props: any) {
     super(props);
@@ -27,11 +29,17 @@ export class ConversationWindow extends React.Component<any, any> {
     };
 
     this.messagesEndRef = React.createRef();
+    this.convSettingsRef = React.createRef();
   }
 
   render(): JSX.Element {
     return (
       <div className={styles.conversationContainer}>
+        <ConversationSettings
+          ref={this.convSettingsRef}
+          uuid={this.props.match.params.uuid}
+        />
+
         <FileDrop
           className={styles["file-drop"]}
           targetClassName={styles["file-drop-target"]}
@@ -63,9 +71,8 @@ export class ConversationWindow extends React.Component<any, any> {
             style={{ marginLeft: "8px" }}
           />
           <h1
-            style={{
-              marginLeft: "8px",
-              fontSize: "20px",
+            onClick={() => {
+              this.convSettingsRef.current.show();
             }}
           >
             {this.props.match.params.uuid}

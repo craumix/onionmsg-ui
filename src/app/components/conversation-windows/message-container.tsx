@@ -49,8 +49,8 @@ export class MessageContainer extends React.Component<
           </div>
         ),
         onClick: () => {
-          this.messageSourceRef.current.show()
-        }
+          this.messageSourceRef.current.show();
+        },
       },
     ];
 
@@ -205,6 +205,7 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
           download={this.props.msgContent.meta.filename}
           style={{
             textDecoration: "none",
+            color: "blueviolet",
           }}
         >
           Download{" "}

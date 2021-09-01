@@ -6,6 +6,8 @@ import { BsThreeDots } from "react-icons/bs";
 import { FaCog, FaDoorOpen } from "react-icons/fa";
 import { Dropdown } from "./dropdown";
 import { Avatar } from "./avatar";
+import { ConversationSettings } from "./overlay/conversation-settings";
+import { ConfirmDialog } from "./overlay/confirm-dialog";
 
 interface ConversationInfo {
   uuid: string;
@@ -114,10 +116,15 @@ interface ConversationListElementProps {
 
 class ConversationListElement extends React.Component<ConversationListElementProps> {
   dropdownRef: React.RefObject<Dropdown>;
+  convSettingsRef: React.RefObject<ConversationSettings>;
+  dialogRef: React.RefObject<ConfirmDialog>;
+
   constructor(props: ConversationListElementProps) {
     super(props);
 
     this.dropdownRef = React.createRef();
+    this.convSettingsRef = React.createRef();
+    this.dialogRef = React.createRef();
   }
 
   render(): JSX.Element {
@@ -129,6 +136,24 @@ class ConversationListElement extends React.Component<ConversationListElementPro
       ${this.props.selected ? styles.selectedEntry : ""}
       `}
       >
+        <ConversationSettings
+          ref={this.convSettingsRef}
+          uuid={this.props.info.uuid}
+        />
+        <ConfirmDialog
+          ref={this.dialogRef}
+          title="Leave Room"
+          text={
+            "Do you really want to leave room " + this.props.info.uuid + "?"
+          }
+          onConfirm={() => {
+            deleteRoom(this.props.info.uuid)
+              .then((res) => res.text())
+              .then((msg) => {
+                console.log("Delete Room: " + msg);
+              });
+          }}
+        />
         <Link
           className={styles.entryLinkContainer}
           to={"/c/" + this.props.info.uuid}
@@ -162,6 +187,7 @@ class ConversationListElement extends React.Component<ConversationListElementPro
             }}
             onClick={(event: React.MouseEvent<HTMLElement>) => {
               event.nativeEvent.preventDefault();
+              event.stopPropagation();
               this.dropdownRef.current.show();
             }}
           >
@@ -175,6 +201,9 @@ class ConversationListElement extends React.Component<ConversationListElementPro
             ref={this.dropdownRef}
             entries={[
               {
+                onClick: () => {
+                  this.convSettingsRef.current.show();
+                },
                 element: (
                   <div>
                     <FaCog style={{ float: "left" }} />
@@ -185,11 +214,7 @@ class ConversationListElement extends React.Component<ConversationListElementPro
               },
               {
                 onClick: () => {
-                  deleteRoom(this.props.info.uuid)
-                    .then((res) => res.text())
-                    .then((msg) => {
-                      console.log("Delete Room: " + msg);
-                    });
+                  this.dialogRef.current.show();
                 },
                 element: (
                   <div style={{ color: "#F00" }}>
