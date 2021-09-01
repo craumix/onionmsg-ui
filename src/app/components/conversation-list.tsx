@@ -16,8 +16,9 @@ interface ConversationInfo {
 }
 
 interface ConversationListState {
-  listElements: JSX.Element[];
-  listElementRefs: React.RefObject<ConversationListElement>[];
+  elementFilter: string;
+  elements: ConversationInfo[];
+  selectedUUID?: string;
 }
 
 export class ConversationList extends React.Component<
@@ -27,8 +28,8 @@ export class ConversationList extends React.Component<
   constructor(props: unknown) {
     super(props);
     this.state = {
-      listElements: [],
-      listElementRefs: [],
+      elementFilter: "",
+      elements: [],
     };
   }
 
@@ -36,16 +37,9 @@ export class ConversationList extends React.Component<
     fetchRoomList()
       .then((res) => res.json())
       .then((result) => {
-        if (result != null) {
-          this.setState({
-            listElements: [],
-            listElementRefs: [],
-          });
-
-          result.forEach((element: ConversationInfo) => {
-            this.appendRoom(element);
-          });
-        }
+        this.setState({
+          elements: result,
+        });
       });
   }
 
@@ -60,61 +54,68 @@ export class ConversationList extends React.Component<
           margin: "4px 0px",
         }}
       >
-        {this.state.listElements}
+        {this.state.elements.map((element) => {
+          if (this.matchesFilter(element)) {
+            return (
+              <ConversationListElement
+                info={element}
+                parent={this}
+                key={element.uuid}
+                selected={this.state.selectedUUID == element.uuid}
+              />
+            );
+          }
+        })}
       </ul>
     );
   }
 
-  setSelectedElement(select: ConversationListElement): void {
-    this.state.listElementRefs.forEach(
-      (element: React.RefObject<ConversationListElement>) => {
-        element.current.setState({
-          selected: select == element.current,
-        });
-      }
-    );
+  setSelectedElement(select: string): void {
+    this.setState({
+      selectedUUID: select,
+    });
   }
 
-  appendRoom(info: ConversationInfo): void {
-    let refs = this.state.listElementRefs;
-    let list = this.state.listElements;
+  setFilter(filter: string): void {
+    this.setState({
+      elementFilter: filter.toLocaleLowerCase(),
+    });
+  }
 
-    refs.push(React.createRef());
-    list.push(
-      <ConversationListElement
-        info={info}
-        parent={this}
-        key={info.uuid}
-        ref={refs[refs.length - 1]}
-      />
-    );
+  pushConversations(...infos: ConversationInfo[]): void {
+    let newElements = this.state.elements;
+    infos.forEach((e) => {
+      newElements.push(e);
+    });
 
     this.setState({
-      listElementRefs: refs,
-      listElements: list,
+      elements: newElements,
     });
+  }
+
+  matchesFilter(info: ConversationInfo): boolean {
+    if (this.state.elementFilter === "") return true;
+
+    if (info.uuid.toLocaleLowerCase().includes(this.state.elementFilter))
+      return true;
+
+    if (info.name?.toLocaleLowerCase().includes(this.state.elementFilter))
+      return true;
+
+    return false;
   }
 }
 
 interface ConversationListElementProps {
   info: ConversationInfo;
   parent: ConversationList;
+  selected?: boolean;
 }
 
-interface ConversationListElementState {
-  selected: boolean;
-}
-
-class ConversationListElement extends React.Component<
-  ConversationListElementProps,
-  ConversationListElementState
-> {
+class ConversationListElement extends React.Component<ConversationListElementProps> {
   dropdownRef: React.RefObject<Dropdown>;
   constructor(props: ConversationListElementProps) {
     super(props);
-    this.state = {
-      selected: false,
-    };
 
     this.dropdownRef = React.createRef();
   }
@@ -125,14 +126,14 @@ class ConversationListElement extends React.Component<
       <li
         className={`
       ${styles.listEntry} 
-      ${this.state.selected ? styles.selectedEntry : ""}
+      ${this.props.selected ? styles.selectedEntry : ""}
       `}
       >
         <Link
           className={styles.entryLinkContainer}
           to={"/c/" + this.props.info.uuid}
           onClick={() => {
-            this.props.parent.setSelectedElement(this);
+            this.props.parent.setSelectedElement(this.props.info.uuid);
           }}
         >
           <Avatar
@@ -157,7 +158,7 @@ class ConversationListElement extends React.Component<
               height: "20px",
               background: "none",
               marginLeft: "auto",
-              marginRight: "10px"
+              marginRight: "10px",
             }}
             onClick={(event: React.MouseEvent<HTMLElement>) => {
               event.nativeEvent.preventDefault();

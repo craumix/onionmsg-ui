@@ -26,7 +26,7 @@ function render() {
         ConversationWindowRef.current.loadNextMessage(notification.data.length);
       }
     } else if (notification.type === "NewRoom") {
-      AppSidebarRef.current.state.conversationListRef.current.appendRoom(notification.data)
+      AppSidebarRef.current.conversationListRef.current.pushConversations(notification.data)
     }
   });
 
