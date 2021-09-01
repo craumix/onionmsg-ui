@@ -31,51 +31,40 @@ export class ConversationWindow extends React.Component<any, any> {
 
   render(): JSX.Element {
     return (
-      <div
-        style={{
-          background: "white",
-          position: "absolute",
-          top: "0px",
-          left: "250px",
-          height: "100%",
-          width: "calc(100% - 250px)",
-          margin: "0px",
-          padding: "0px",
-        }}
-      >
+      <div className={styles.conversationContainer}>
         <FileDrop
           className={styles["file-drop"]}
           targetClassName={styles["file-drop-target"]}
           onDrop={(files, event) => {
             Array.from(files).forEach((file) => {
               //TODO add some kind of dialog
-              postFileToRoom(this.props.match.params.uuid, file.path).then((res) => {
-                if (res.ok) {
-                  console.log("File sent!");
+              postFileToRoom(this.props.match.params.uuid, file.path).then(
+                (res) => {
+                  if (res.ok) {
+                    console.log("File sent!");
 
-                  this.loadNextMessage();
-                } else {
-                  console.log("Error sending file!\n" + res.text);
+                    this.loadNextMessage();
+                  } else {
+                    console.log("Error sending file!\n" + res.text);
+                  }
                 }
-              });
+              );
             });
           }}
         >
           <FaUpload size="48" style={{ color: "#888" }} />
           Upload File(s)
         </FileDrop>
-        <div
-          style={{
-            position: "absolute",
-            width: "100%",
-            height: "32px",
-          }}
-        >
+        <div className={styles.conversationHeader}>
+          <Avatar
+            seed={this.props.match.params.uuid}
+            size={32}
+            variant="marble"
+            style={{ marginLeft: "8px" }}
+          />
           <h1
             style={{
-              margin: "0px",
               marginLeft: "8px",
-              marginTop: "8px",
               fontSize: "20px",
             }}
           >
@@ -84,11 +73,9 @@ export class ConversationWindow extends React.Component<any, any> {
         </div>
         <div
           style={{
-            position: "absolute",
-            top: "32px",
-            height: "calc(100% - 80px)",
             width: "100%",
             overflowX: "hidden",
+            flexGrow: 1,
           }}
         >
           <div>{this.state.messagesContainers}</div>
@@ -145,17 +132,21 @@ export class ConversationWindow extends React.Component<any, any> {
                 .showOpenDialog(null, {
                   properties: ["openFile"],
                 })
-                .then((result) => result.filePaths.forEach(path => {
-                  postFileToRoom(this.props.match.params.uuid, path).then((res) => {
-                    if (res.ok) {
-                      console.log("File sent!");
-    
-                      this.loadNextMessage();
-                    } else {
-                      console.log("Error sending file!\n" + res.text);
-                    }
-                  });
-                }));
+                .then((result) =>
+                  result.filePaths.forEach((path) => {
+                    postFileToRoom(this.props.match.params.uuid, path).then(
+                      (res) => {
+                        if (res.ok) {
+                          console.log("File sent!");
+
+                          this.loadNextMessage();
+                        } else {
+                          console.log("Error sending file!\n" + res.text);
+                        }
+                      }
+                    );
+                  })
+                );
             }}
           >
             <FaPaperclip size="20" />
@@ -176,7 +167,7 @@ export class ConversationWindow extends React.Component<any, any> {
             hidden={!this.state.emojiSelectorVisible}
             style={{
               position: "absolute",
-              bottom: "64px",
+              bottom: "48px",
               right: "0px",
             }}
             onBlur={() => {

@@ -156,7 +156,7 @@ export class MessageContainer extends React.Component<
       case "mtype.file":
         return <FileMessageContainer msgContent={this.props.message.content} />;
       default:
-        return <p>{JSON.stringify(this.props.message)}</p>;
+        return <pre>{JSON.stringify(this.props.message, null, 2)}</pre>;
     }
   }
 
