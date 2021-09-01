@@ -1,6 +1,7 @@
+import mime from "mime";
 import { IMessageEvent } from "websocket";
-const fs = window.require("electron").remote.require("fs")
-const fetch = window.require("electron").remote.require("node-fetch")
+const fs = window.require("electron").remote.require("fs");
+const fetch = window.require("electron").remote.require("node-fetch");
 
 export interface DaemonNotification {
   type: string;
@@ -11,7 +12,10 @@ const apiProto = "http://";
 const baseUrl = "localhost:10052";
 const apiVer = "v1";
 
-export function constructAPIUrl(endpoint: string, form?: Map<string, string>): string {
+export function constructAPIUrl(
+  endpoint: string,
+  form?: Map<string, string>
+): string {
   if (endpoint.startsWith("/")) {
     endpoint = endpoint.substr(1);
   }
@@ -91,15 +95,17 @@ export function postMessageToRoom(
   return apiPOST("/room/send/message", data, new Map([["uuid", uuid]]));
 }
 
-export function postFileToRoom(uuid: string, file: File): Promise<Response> {
-  let stream = fs.createReadStream(file.path);
+export function postFileToRoom(uuid: string, filePath: string): Promise<Response> {
+  let stream = fs.createReadStream(filePath);
+  var filename = filePath.replace(/^.*[\\\/]/, '')
+  let filetype = mime.getType(filename)
   return apiPOST(
     "/room/send/file",
     stream,
     new Map([
       ["uuid", uuid],
-      ["filename", file.name],
-      ["mimetype", file.type],
+      ["filename", filename],
+      ["mimetype", filetype],
     ])
   );
 }

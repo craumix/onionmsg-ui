@@ -9,7 +9,10 @@ import {
 import { Avatar } from "../avatar";
 import { MessageContainer } from "./message-container";
 import styles from "./conversation-window.sass";
-import { FaUpload } from "react-icons/fa";
+import { FaPaperclip, FaUpload } from "react-icons/fa";
+import { BiSticker } from "react-icons/bi";
+import { GrEmoji } from "react-icons/gr";
+const dialog = window.require("electron").remote.dialog;
 
 export class ConversationWindow extends React.Component<any, any> {
   messagesEndRef: React.RefObject<HTMLDivElement>;
@@ -46,7 +49,7 @@ export class ConversationWindow extends React.Component<any, any> {
           onDrop={(files, event) => {
             Array.from(files).forEach((file) => {
               //TODO add some kind of dialog
-              postFileToRoom(this.props.match.params.uuid, file).then((res) => {
+              postFileToRoom(this.props.match.params.uuid, file.path).then((res) => {
                 if (res.ok) {
                   console.log("File sent!");
 
@@ -83,7 +86,7 @@ export class ConversationWindow extends React.Component<any, any> {
           style={{
             position: "absolute",
             top: "32px",
-            height: "calc(100% - 96px)",
+            height: "calc(100% - 80px)",
             width: "100%",
             overflowX: "hidden",
           }}
@@ -91,24 +94,16 @@ export class ConversationWindow extends React.Component<any, any> {
           <div>{this.state.messagesContainers}</div>
           <div ref={this.messagesEndRef} />
         </div>
-        <div
-          style={{
-            position: "absolute",
-            bottom: "0px",
-            width: "100%",
-            height: "64px",
-          }}
-        >
+        <div className={styles.conversationFooter}>
           <textarea
             placeholder="Send a message here..."
             style={{
               border: "0px",
               outline: "none",
-              margin: "16px",
+              margin: "8px",
               fontSize: "16px",
-              width: "80%",
               resize: "none",
-              float: "left",
+              flexGrow: 1,
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
@@ -144,18 +139,38 @@ export class ConversationWindow extends React.Component<any, any> {
             }
           />
           <button
-            style={{
-              border: "0px",
-              background: "white",
-              fontSize: "20px",
+            onClick={() => {
+              console.log(dialog);
+              dialog
+                .showOpenDialog(null, {
+                  properties: ["openFile"],
+                })
+                .then((result) => result.filePaths.forEach(path => {
+                  postFileToRoom(this.props.match.params.uuid, path).then((res) => {
+                    if (res.ok) {
+                      console.log("File sent!");
+    
+                      this.loadNextMessage();
+                    } else {
+                      console.log("Error sending file!\n" + res.text);
+                    }
+                  });
+                }));
             }}
+          >
+            <FaPaperclip size="20" />
+          </button>
+          <button
             onClick={() =>
               this.setState({
                 emojiSelectorVisible: !this.state.emojiSelectorVisible,
               })
             }
           >
-            😃
+            <GrEmoji size="20" />
+          </button>
+          <button>
+            <BiSticker size="20" />
           </button>
           <div
             hidden={!this.state.emojiSelectorVisible}
@@ -201,7 +216,9 @@ export class ConversationWindow extends React.Component<any, any> {
   }
 
   loadNextMessage(count?: number): void {
-    this.loadNewMessages(true, count ?? 1).then(() => this.scrollMessageContainerDown());
+    this.loadNewMessages(true, count ?? 1).then(() =>
+      this.scrollMessageContainerDown()
+    );
   }
 
   loadNewMessages(append: boolean, count?: number): Promise<void> {
@@ -222,7 +239,11 @@ export class ConversationWindow extends React.Component<any, any> {
               lastSender = element.meta.sender;
             }
             foo.push(
-              <MessageContainer convWindow={this} message={element} key={"message " + element.sig} />
+              <MessageContainer
+                convWindow={this}
+                message={element}
+                key={"message " + element.sig}
+              />
             );
           });
         }
