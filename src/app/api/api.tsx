@@ -56,6 +56,10 @@ export function listenOnBackendNotifications(
   };
 }
 
+export function fetchStatus(): Promise<Response> {
+  return apiGET("/status")
+}
+
 export function fetchRoomList(): Promise<Response> {
   return apiGET("/room/list");
 }

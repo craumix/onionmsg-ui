@@ -7,6 +7,7 @@ import { w3cwebsocket as WebSocket } from "websocket";
 import { AppSidebar } from "./components/app-sidebar";
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
 import "./app.sass"
+import { NoBackendDialog } from "./components/overlay/no-backend";
 
 const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef();
 const ConversationWindowRef: React.RefObject<ConversationWindow> =
@@ -32,6 +33,8 @@ function render() {
 
   ReactDOM.render(
     <div>
+      <NoBackendDialog />
+
       <Router>
         <AppSidebar ref={AppSidebarRef} />
         <Route

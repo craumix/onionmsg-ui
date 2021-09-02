@@ -1,12 +1,19 @@
 import React from "react";
 import styles from "./app-overlay.sass";
 
+interface AppOverlayMenuProps {
+  dontHide?: boolean;
+}
+
 interface AppOverlayMenuState {
   visible: boolean;
 }
 
-export class AppOverlayMenu extends React.Component<any, AppOverlayMenuState> {
-  constructor(props: unknown) {
+export class AppOverlayMenu extends React.Component<
+  AppOverlayMenuProps,
+  AppOverlayMenuState
+> {
+  constructor(props: AppOverlayMenuProps) {
     super(props);
 
     this.state = {
@@ -19,11 +26,13 @@ export class AppOverlayMenu extends React.Component<any, AppOverlayMenuState> {
       <div>
         <div
           className={styles.dimingOverlay}
-          onClick={() =>
-            this.setState({
-              visible: false,
-            })
-          }
+          onClick={() => {
+            if (!this.props.dontHide) {
+              this.setState({
+                visible: false,
+              });
+            }
+          }}
         >
           <div
             className={styles.embeddedMenu}
