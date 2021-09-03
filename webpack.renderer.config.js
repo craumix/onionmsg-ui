@@ -1,5 +1,5 @@
-const rules = require('./webpack.rules');
-const plugins = require('./webpack.plugins');
+const rules = require("./webpack.rules");
+const plugins = require("./webpack.plugins");
 
 rules.push({
   test: /\.sass$/,
@@ -8,16 +8,24 @@ rules.push({
     "@teamsupercell/typings-for-css-modules-loader",
     {
       loader: "css-loader",
-      options: { modules: true }
+      options: { modules: true },
     },
-    "sass-loader"
-  ]
+    "sass-loader",
+  ],
 });
 
 rules.push({
-  test: /\.css$/,
-  use: ["style-loader", "css-loader"]
-})
+  test: /\.svg$/,
+  use: [
+    "babel-loader",
+    {
+      loader: "react-svg-loader",
+      options: {
+        jsx: true, // true outputs JSX tags
+      },
+    },
+  ],
+});
 
 module.exports = {
   module: {
@@ -25,6 +33,6 @@ module.exports = {
   },
   plugins: plugins,
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css']
+    extensions: [".js", ".ts", ".jsx", ".tsx", ".css"],
   },
 };

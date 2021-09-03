@@ -1,7 +1,8 @@
 .file-drop
-    position: absolute
-    width: 100%
+    position: fixed
     height: 100%
+    //TODO fix width calculation
+    width: calc( 100% - 250px )
     z-index: 1
     pointer-events: none
     > .file-drop-target
@@ -23,11 +24,7 @@
 
 .conversationContainer
     background: white
-    position: absolute
-    top: 0px
-    left: 250px
     height: 100%
-    width: calc(100% - 250px)
     margin: 0px
     padding: 0px
     display: flex
