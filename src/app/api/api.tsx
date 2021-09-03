@@ -1,7 +1,9 @@
 import mime from "mime";
 import { IMessageEvent } from "websocket";
 const fs = window.require("electron").remote.require("fs");
-const fetch = window.require("electron").remote.require("node-fetch");
+const fetch = window
+  .require("electron")
+  .remote.require("electron-fetch").default;
 
 export interface DaemonNotification {
   type: string;
@@ -28,7 +30,7 @@ export function constructAPIUrl(
 
 function apiGET(endpoint: string, form?: Map<string, any>): Promise<Response> {
   return fetch(constructAPIUrl(endpoint, form), {
-    mode: "no-cors",
+    //mode: "no-cors",
   });
 }
 
@@ -38,7 +40,7 @@ function apiPOST(
   form?: Map<string, any>
 ): Promise<Response> {
   return fetch(constructAPIUrl(endpoint, form), {
-    mode: "no-cors",
+    //mode: "no-cors",
     method: "POST",
     body: data,
   });
@@ -57,7 +59,7 @@ export function listenOnBackendNotifications(
 }
 
 export function fetchStatus(): Promise<Response> {
-  return apiGET("/status")
+  return apiGET("/status");
 }
 
 export function fetchRoomList(): Promise<Response> {
@@ -99,10 +101,13 @@ export function postMessageToRoom(
   return apiPOST("/room/send/message", data, new Map([["uuid", uuid]]));
 }
 
-export function postFileToRoom(uuid: string, filePath: string): Promise<Response> {
+export function postFileToRoom(
+  uuid: string,
+  filePath: string
+): Promise<Response> {
   let stream = fs.createReadStream(filePath);
-  var filename = filePath.replace(/^.*[\\\/]/, '')
-  let filetype = mime.getType(filename)
+  var filename = filePath.replace(/^.*[\\\/]/, "");
+  let filetype = mime.getType(filename);
   return apiPOST(
     "/room/send/file",
     stream,
