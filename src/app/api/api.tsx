@@ -62,6 +62,10 @@ export function fetchStatus(): Promise<Response> {
   return apiGET("/status");
 }
 
+export function fetchRoomInfo(id: string): Promise<Response> {
+  return apiGET("/room/info", new Map([["id", id]]));
+}
+
 export function fetchRoomList(): Promise<Response> {
   return apiGET("/room/list");
 }

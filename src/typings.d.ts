@@ -9,7 +9,7 @@ interface MessageMeta {
 }
 
 interface MessageContent {
-  type: string;
+  type: "mtype.text" | "mtype.cmd" | "mtype.file" | "mtype.sticker";
   meta: ContentMeta;
   data: string;
 }
@@ -25,4 +25,12 @@ interface ChatMessage {
   meta: MessageMeta;
   content: MessageContent;
   sig: string;
+}
+
+interface ConversationInfo {
+  uuid: string;
+  self: string;
+  peers: string[];
+  name: string;
+  nicks: Map<string, string>;
 }

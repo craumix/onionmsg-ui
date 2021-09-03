@@ -9,14 +9,6 @@ import { Avatar } from "./avatar";
 import { ConversationSettings } from "./overlay/conversation-settings";
 import { ConfirmDialog } from "./overlay/confirm-dialog";
 
-interface ConversationInfo {
-  uuid: string;
-  self: string;
-  peers: string[];
-  name: string;
-  nicks: Map<string, string>;
-}
-
 interface ConversationListState {
   elementFilter: string;
   elements: ConversationInfo[];
