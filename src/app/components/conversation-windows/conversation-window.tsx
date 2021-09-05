@@ -14,8 +14,13 @@ import { BiSticker } from "react-icons/bi";
 import { GrEmoji } from "react-icons/gr";
 import { ConversationSettings } from "../overlay/conversation-settings";
 import { ConfirmDialog } from "../overlay/confirm-dialog";
-import { filesizeFromPath, filenameFromPath } from "../../utils/file";
+import {
+  filesizeFromPath,
+  filenameFromPath,
+  readFileBytes,
+} from "../../utils/file";
 import prettyBytes from "pretty-bytes";
+import mime from "mime";
 const dialog = window.require("electron").remote.dialog;
 
 export class ConversationWindow extends React.Component<any, any> {
@@ -200,40 +205,65 @@ export class ConversationWindow extends React.Component<any, any> {
     }
   }
 
+  //TODO freeze hell
   sendSingleFile(file: string | File, onSuccess?: () => void): void {
-    let filename;
-    let filesize;
+    //8 MiB
+    const uploadPreviewMaxSize = 8388608;
+
+    let showDialog = (filename: string, filesize: number, imgURL?: string) => {
+      this.setState({
+        fileUploadPreview: (
+          <div>
+            {imgURL && <img src={imgURL} />}
+            <p style={{ margin: "2px" }}>
+              {filename + " (" + prettyBytes(filesize) + ")"}
+            </p>
+          </div>
+        ),
+        onUploadConfirm: () => {
+          postFileToRoom(this.uuid(), file, (res: Response) => {
+            if (res.ok) {
+              this.loadNextMessage();
+
+              if (onSuccess) {
+                onSuccess();
+              }
+            } else {
+              console.log("Error sending file!\n" + res.text);
+            }
+          });
+        },
+      });
+      this.uploadConfirmDialog.current.show();
+    };
 
     if (typeof file === "string") {
-      filename = filenameFromPath(file);
-      filesize = filesizeFromPath(file);
-    } else {
-      filename = file.name;
-      filesize = file.size;
-    }
+      let filename = filenameFromPath(file);
+      let filesize = filesizeFromPath(file);
 
-    this.setState({
-      fileUploadPreview: (
-        <div>
-          <FaFile />
-          <p>{filename + " (" + prettyBytes(filesize) + ")"}</p>
-        </div>
-      ),
-      onUploadConfirm: () => {
-        postFileToRoom(this.uuid(), file, (res: Response) => {
-          if (res.ok) {
-            this.loadNextMessage();
-
-            if (onSuccess) {
-              onSuccess();
-            }
-          } else {
-            console.log("Error sending file!\n" + res.text);
-          }
+      if (
+        mime.getType(filename).startsWith("image") &&
+        filesize <= uploadPreviewMaxSize
+      ) {
+        //TODO handle error properly
+        readFileBytes(file, (err, data) => {
+          if (err) console.log(err);
+          showDialog(
+            filename,
+            filesize,
+            URL.createObjectURL(new Blob([new Uint8Array(data)]))
+          );
         });
-      },
-    });
-    this.uploadConfirmDialog.current.show();
+      } else {
+        showDialog(filename, filesize);
+      }
+    } else {
+      showDialog(
+        file.name,
+        file.size,
+        file.type.startsWith("image") ? URL.createObjectURL(file) : undefined
+      );
+    }
   }
 
   hardReloadMessages(): void {

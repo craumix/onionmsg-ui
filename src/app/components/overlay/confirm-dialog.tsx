@@ -20,7 +20,7 @@ export class ConfirmDialog extends React.Component<ConfirmDialogProps> {
   render(): JSX.Element {
     return (
       <AppOverlayMenu ref={this.overlayRef}>
-        <div style={{ minWidth: "250px" }}>
+        <div style={{ minWidth: "250px", maxWidth: "500px" }}>
           <h1>{this.props.title}</h1>
           {this.props.children}
           <div className={styles.buttonContainer}>
