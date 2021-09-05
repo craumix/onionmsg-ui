@@ -116,7 +116,6 @@ class ConversationListElement extends React.Component<ConversationListElementPro
 
   render(): JSX.Element {
     return (
-      //FIXME
       <li
         className={`
       ${styles.listEntry} 

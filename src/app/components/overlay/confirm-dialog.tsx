@@ -26,6 +26,7 @@ export class ConfirmDialog extends React.Component<ConfirmDialogProps> {
           style={{ minWidth: "250px", maxWidth: "500px" }}
           ref={this.topDivRef}
           onKeyDown={(event) => {
+            //TODO find out why these sometimes work when manually clicking the menu
             if (event.key === "Enter") this.confirm();
             if (event.key === "Escape") this.cancel();
           }}

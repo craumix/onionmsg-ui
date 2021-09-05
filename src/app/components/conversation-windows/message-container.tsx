@@ -137,8 +137,8 @@ export class MessageContainer extends React.Component<
             <div className={styles.markdownContainer}>
               <MarkdownContent text={this.decodedMessageText()} />
             </div>
-            {findYoutubeIDs(this.decodedMessageText()).map((id: string) => (
-              <YoutubeContainer id={id} key={id} />
+            {findYoutubeIDs(this.decodedMessageText()).map((video: [string, number]) => (
+              <YoutubeContainer id={video[0]} start={video[1]} key={video[0]} />
             ))}
           </div>
         );

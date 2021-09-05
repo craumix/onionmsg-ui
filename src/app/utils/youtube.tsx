@@ -1,6 +1,11 @@
 var ytIdRegex = new RegExp(
-  /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)/g
+  /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)(?:(?:[\?\&]t=)([0-9]*))?/g
 );
+
+/*
+Old: /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)/g
+New: /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)(?:(?:[\?\&]t=)([0-9]*))?/g
+*/
 
 export interface YoutubeVideoMeta {
   provider_url: string;
@@ -30,14 +35,15 @@ export function getYoutubeVideoMeta(id: string): Promise<YoutubeVideoMeta> {
   ).then((res) => res.json());
 }
 
-export function findYoutubeIDs(text: string): string[] {
-  let ids: string[] = [];
+export function findYoutubeIDs(text: string): [string, number][] {
+  let ids: [string, number][] = [];
   let match: RegExpExecArray;
   do {
     match = ytIdRegex.exec(text);
 
     if (match) {
-      ids.push(match[1]);
+      console.log(match);
+      ids.push([match[1], +match[2] ?? 0]);
     }
   } while (match);
 

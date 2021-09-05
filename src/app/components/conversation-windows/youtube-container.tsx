@@ -10,6 +10,7 @@ import styles from "./youtube-container.sass";
 
 interface YoutubeContainerProps {
   id: string;
+  start?: number;
 }
 
 interface YoutubeContainerState {
@@ -72,6 +73,7 @@ export class YoutubeContainer extends React.Component<
                 playerVars: {
                   autoplay: 1,
                   modestbranding: 1,
+                  start: this.props.start ?? 0
                 },
               }}
             />
