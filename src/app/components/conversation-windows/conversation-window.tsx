@@ -35,29 +35,13 @@ export class ConversationWindow extends React.Component<any, any> {
   render(): JSX.Element {
     return (
       <div className={styles.conversationContainer}>
-        <ConversationSettings
-          ref={this.convSettingsRef}
-          uuid={this.props.match.params.uuid}
-        />
+        <ConversationSettings ref={this.convSettingsRef} uuid={this.uuid()} />
 
         <FileDrop
           className={styles["file-drop"]}
           targetClassName={styles["file-drop-target"]}
           onDrop={(files, event) => {
-            Array.from(files).forEach((file) => {
-              //TODO add some kind of dialog
-              postFileToRoom(this.props.match.params.uuid, file.path).then(
-                (res) => {
-                  if (res.ok) {
-                    console.log("File sent!");
-
-                    this.loadNextMessage();
-                  } else {
-                    console.log("Error sending file!\n" + res.text);
-                  }
-                }
-              );
-            });
+            this.sendFiles(files);
           }}
         >
           <FaUpload size="48" style={{ color: "#888" }} />
@@ -65,7 +49,7 @@ export class ConversationWindow extends React.Component<any, any> {
         </FileDrop>
         <div className={styles.conversationHeader}>
           <Avatar
-            seed={this.props.match.params.uuid}
+            seed={this.uuid()}
             size={32}
             variant="marble"
             style={{ marginLeft: "8px" }}
@@ -75,7 +59,7 @@ export class ConversationWindow extends React.Component<any, any> {
               this.convSettingsRef.current.show();
             }}
           >
-            {this.props.match.params.uuid}
+            {this.uuid()}
           </h1>
         </div>
         <div
@@ -99,6 +83,12 @@ export class ConversationWindow extends React.Component<any, any> {
               resize: "none",
               flexGrow: 1,
             }}
+            onPaste={(event) => {
+              if (event.clipboardData.files.length > 0) {
+                event.preventDefault();
+                this.sendFiles(event.clipboardData.files);
+              }
+            }}
             onKeyDown={(event) => {
               if (event.key === "Enter" && !event.shiftKey) {
                 event.preventDefault();
@@ -109,20 +99,19 @@ export class ConversationWindow extends React.Component<any, any> {
                   return;
                 }
 
-                postMessageToRoom(
-                  this.props.match.params.uuid,
-                  this.state.messageInput
-                ).then((res) => {
-                  if (res.ok) {
-                    console.log("Message sent!");
-                    this.setState({
-                      messageInput: "",
-                    });
-                    this.loadNextMessage();
-                  } else {
-                    console.log("Error sending message!\n" + res.text);
+                postMessageToRoom(this.uuid(), this.state.messageInput).then(
+                  (res) => {
+                    if (res.ok) {
+                      console.log("Message sent!");
+                      this.setState({
+                        messageInput: "",
+                      });
+                      this.loadNextMessage();
+                    } else {
+                      console.log("Error sending message!\n" + res.text);
+                    }
                   }
-                });
+                );
               }
             }}
             value={this.state.messageInput}
@@ -134,24 +123,13 @@ export class ConversationWindow extends React.Component<any, any> {
           />
           <button
             onClick={() => {
-              console.log(dialog);
               dialog
                 .showOpenDialog(null, {
                   properties: ["openFile"],
                 })
                 .then((result) =>
                   result.filePaths.forEach((path) => {
-                    postFileToRoom(this.props.match.params.uuid, path).then(
-                      (res) => {
-                        if (res.ok) {
-                          console.log("File sent!");
-
-                          this.loadNextMessage();
-                        } else {
-                          console.log("Error sending file!\n" + res.text);
-                        }
-                      }
-                    );
+                    this.sendSingleFile(path);
                   })
                 );
             }}
@@ -202,9 +180,32 @@ export class ConversationWindow extends React.Component<any, any> {
   }
 
   componentDidUpdate(prevProps: any): void {
-    if (this.props.match.params.uuid != prevProps.match.params.uuid) {
+    if (this.uuid() != prevProps.match.params.uuid) {
       this.hardReloadMessages();
     }
+  }
+
+  uuid(): string {
+    return this.props.match.params.uuid;
+  }
+
+  sendFiles(files: FileList): void {
+    Array.from(files).forEach((file) => {
+      //TODO add some kind of dialog
+      this.sendSingleFile(file);
+    });
+  }
+
+  sendSingleFile(file: string | File): void {
+    postFileToRoom(this.uuid(), file, (res: Response) => {
+      if (res.ok) {
+        console.log("File sent!");
+
+        this.loadNextMessage();
+      } else {
+        console.log("Error sending file!\n" + res.text);
+      }
+    });
   }
 
   hardReloadMessages(): void {
@@ -220,7 +221,7 @@ export class ConversationWindow extends React.Component<any, any> {
   }
 
   loadNewMessages(append: boolean, count?: number): Promise<void> {
-    return fetchRoomMessages(this.props.match.params.uuid, count)
+    return fetchRoomMessages(this.uuid(), count)
       .then((res) => res.json())
       .then((result) => {
         const foo: JSX.Element[] = append ? this.state.messagesContainers : [];

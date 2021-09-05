@@ -1,5 +1,7 @@
 import mime from "mime";
+import { FSWatcher } from "original-fs";
 import { IMessageEvent } from "websocket";
+const stream = window.require("electron").remote.require("stream");
 const fs = window.require("electron").remote.require("fs");
 const fetch = window
   .require("electron")
@@ -107,20 +109,43 @@ export function postMessageToRoom(
 
 export function postFileToRoom(
   uuid: string,
-  filePath: string
-): Promise<Response> {
-  let stream = fs.createReadStream(filePath);
-  var filename = filePath.replace(/^.*[\\\/]/, "");
-  let filetype = mime.getType(filename);
-  return apiPOST(
+  file: string | File,
+  responseHandler?: (response: Response) => void
+): void {
+  if (typeof file === "string") {
+    return sendFile(
+      uuid,
+      fs.createReadStream(file),
+      file.replace(/^.*[\\\/]/, ""),
+      responseHandler
+    );
+  } else {
+    file.arrayBuffer().then((res) => {
+      sendFile(
+        uuid,
+        stream.Readable.from([new Uint8Array(res)]),
+        file.name,
+        responseHandler
+      );
+    });
+  }
+}
+
+function sendFile(
+  uuid: string,
+  filestream: any,
+  filename: string,
+  responseHandler?: (response: Response) => void
+): void {
+  apiPOST(
     "/room/send/file",
-    stream,
+    filestream,
     new Map([
       ["uuid", uuid],
       ["filename", filename],
-      ["mimetype", filetype],
+      ["mimetype", mime.getType(filename)],
     ])
-  );
+  ).then(responseHandler ?? (() => {}));
 }
 
 export function deleteRoom(uuid: string): Promise<Response> {
