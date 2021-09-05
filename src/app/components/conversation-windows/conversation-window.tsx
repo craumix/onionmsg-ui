@@ -46,7 +46,7 @@ export class ConversationWindow extends React.Component<any, any> {
 
   render(): JSX.Element {
     return (
-      <div className={styles.conversationContainer}>
+      <div className={`${styles.conversationContainer} ${this.props.className}`}>
         <ConversationSettings ref={this.convSettingsRef} uuid={this.uuid()} />
         <ConfirmDialog
           ref={this.uploadConfirmDialog}

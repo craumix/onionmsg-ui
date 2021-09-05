@@ -5,7 +5,12 @@ import { FaCog, FaPlus, FaServer } from "react-icons/fa";
 import { ContactMenu } from "./overlay/contact-menu";
 import { BackendInfo } from "./overlay/backend-info";
 
-export class AppSidebar extends React.Component {
+interface AppSidebarProps {
+  className?: string;
+  match?: any;
+}
+
+export class AppSidebar extends React.Component<AppSidebarProps> {
   conversationListRef: React.RefObject<ConversationList>;
   contactMenuRef: React.RefObject<ContactMenu>;
   backendInfoRef: React.RefObject<BackendInfo>;
@@ -20,7 +25,7 @@ export class AppSidebar extends React.Component {
 
   render(): JSX.Element {
     return (
-      <div className={styles.sidebarContainer}>
+      <div className={`${styles.sidebarContainer} ${this.props.className}`}>
         <ContactMenu ref={this.contactMenuRef} />
         <BackendInfo ref={this.backendInfoRef} />
 
@@ -65,7 +70,7 @@ export class AppSidebar extends React.Component {
           />
         </div>
 
-        <ConversationList ref={this.conversationListRef} />
+        <ConversationList ref={this.conversationListRef} match={this.props.match} />
       </div>
     );
   }

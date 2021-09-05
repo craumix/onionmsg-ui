@@ -1,6 +1,11 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-import { HashRouter as Router, Redirect, Route } from "react-router-dom";
+import {
+  HashRouter as Router,
+  Redirect,
+  Route,
+  Switch,
+} from "react-router-dom";
 import { ConversationList } from "./components/conversation-list";
 import { ConversationWindow } from "./components/conversation-windows/conversation-window";
 import { w3cwebsocket as WebSocket } from "websocket";
@@ -9,6 +14,8 @@ import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
 import styles from "./app.sass";
 import { NoBackendDialog } from "./components/overlay/no-backend";
 import OnlineSVG from "./assets/undraw/online.svg";
+
+const NilUUID = "00000000-0000-0000-0000-000000000000";
 
 const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef();
 const ConversationWindowRef: React.RefObject<ConversationWindow> =
@@ -38,46 +45,56 @@ function render() {
     <div>
       <NoBackendDialog />
 
-      <div className={styles.appContainer}>
-        <Router>
-          <AppSidebar ref={AppSidebarRef} />
-
-          <Route
-            exact
-            path="/"
-            render={(props) => (
-              <div
-                style={{
-                  height: "100%",
-                  width: "100%",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  flexDirection: "column",
-                }}
-              >
-                {
-                  //TODO Fix SVGs
-                }
-                <OnlineSVG
-                  style={{
-                    transform: "scale(0.5)",
-                  }}
-                />
-              </div>
-            )}
-          />
-
+      <Router>
+        <Switch>
           <Route
             path="/c/:uuid"
             render={(props) => (
-              <ConversationWindow ref={ConversationWindowRef} {...props} />
+              <div className={styles.appContainer}>
+                <AppSidebar
+                  className={styles.sidebar}
+                  ref={AppSidebarRef}
+                  {...props}
+                />
+                <Switch>
+                  <Route exact path={"/c/" + NilUUID}>
+                    <div
+                      className={styles.main}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        flexDirection: "column",
+                      }}
+                    >
+                      {
+                        //TODO Fix SVGs
+                      }
+                      <OnlineSVG
+                        style={{
+                          transform: "scale(0.5)",
+                        }}
+                      />
+                    </div>
+                  </Route>
+                  <Route
+                    path="/c/:uuid"
+                    render={(props) => (
+                      <ConversationWindow
+                        className={styles.main}
+                        ref={ConversationWindowRef}
+                        {...props}
+                      />
+                    )}
+                  />
+                </Switch>
+              </div>
             )}
-          />
+          ></Route>
 
-          <Redirect to="/" />
-        </Router>
-      </div>
+          <Redirect to={"/c/" + NilUUID} />
+        </Switch>
+      </Router>
     </div>,
     document.getElementById("app")
   );

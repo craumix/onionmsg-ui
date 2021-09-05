@@ -9,17 +9,20 @@ import { Avatar } from "./avatar";
 import { ConversationSettings } from "./overlay/conversation-settings";
 import { ConfirmDialog } from "./overlay/confirm-dialog";
 
+interface ConversationListProps {
+  match?: any;
+}
+
 interface ConversationListState {
   elementFilter: string;
   elements: ConversationInfo[];
-  selectedUUID?: string;
 }
 
 export class ConversationList extends React.Component<
-  unknown,
+  ConversationListProps,
   ConversationListState
 > {
-  constructor(props: unknown) {
+  constructor(props: ConversationListProps) {
     super(props);
     this.state = {
       elementFilter: "",
@@ -53,21 +56,14 @@ export class ConversationList extends React.Component<
             return (
               <ConversationListElement
                 info={element}
-                parent={this}
                 key={element.uuid}
-                selected={this.state.selectedUUID == element.uuid}
+                selected={this.props.match.params.uuid == element.uuid}
               />
             );
           }
         })}
       </ul>
     );
-  }
-
-  setSelectedElement(select: string): void {
-    this.setState({
-      selectedUUID: select,
-    });
   }
 
   setFilter(filter: string): void {
@@ -102,7 +98,6 @@ export class ConversationList extends React.Component<
 
 interface ConversationListElementProps {
   info: ConversationInfo;
-  parent: ConversationList;
   selected?: boolean;
 }
 
@@ -150,9 +145,6 @@ class ConversationListElement extends React.Component<ConversationListElementPro
         <Link
           className={styles.entryLinkContainer}
           to={"/c/" + this.props.info.uuid}
-          onClick={() => {
-            this.props.parent.setSelectedElement(this.props.info.uuid);
-          }}
         >
           <Avatar
             style={{
