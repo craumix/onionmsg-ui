@@ -48,14 +48,30 @@ const createWindow = (): void => {
 app.on("ready", createWindow);
 
 //TODO Fix later and remove wildcard
+let backend = "localhost:10052";
+let google =
+  "*.youtube.com youtube.com " +
+  "*.ytimg.com ytimg.com " +
+  "*.gstatic.com gstatic.com " +
+  "*.doubleclick.net doubleclick.net " +
+  "*.googlevideo.com googlevideo.com " +
+  "*.google.com google.com " +
+  "*.ggpht.com ggpht.com";
+
 app.on("ready", () => {
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     callback({
       responseHeaders: {
         ...details.responseHeaders,
         "Content-Security-Policy": [
-          "default-src 'self' * 'unsafe-inline' data: blob: ;" +
-            "script-src 'self' * 'unsafe-eval' 'unsafe-inline' data: ;",
+          "default-src 'self' " +
+            backend +
+            " " +
+            google +
+            " 'unsafe-inline' data: blob: ws: devtools: ;" +
+            "script-src 'self' " +
+            google +
+            " 'unsafe-eval' 'unsafe-inline' data: ;",
         ],
       },
     });

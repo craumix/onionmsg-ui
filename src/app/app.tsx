@@ -63,6 +63,7 @@ function render() {
                         alignItems: "center",
                         justifyContent: "center",
                         flexDirection: "column",
+                        overflow: "hidden"
                       }}
                     >
                       {

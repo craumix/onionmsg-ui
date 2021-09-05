@@ -76,6 +76,9 @@ export class ConversationWindow extends React.Component<any, any> {
             style={{ marginLeft: "8px" }}
           />
           <h1
+          style={{
+            whiteSpace: "nowrap"
+          }}
             onClick={() => {
               this.convSettingsRef.current.show();
             }}
