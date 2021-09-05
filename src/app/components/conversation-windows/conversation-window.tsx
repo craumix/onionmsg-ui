@@ -216,6 +216,9 @@ export class ConversationWindow extends React.Component<any, any> {
       this.setState({
         fileUploadPreview: (
           <div>
+            {
+              //TODO add alternative for non images
+            }
             {imgURL && (
               <img
                 style={{ maxWidth: "100%", maxHeight: "100%" }}
