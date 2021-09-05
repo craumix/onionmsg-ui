@@ -6,14 +6,12 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import { ConversationList } from "./components/conversation-list";
 import { ConversationWindow } from "./components/conversation-windows/conversation-window";
-import { w3cwebsocket as WebSocket } from "websocket";
-import { AppSidebar } from "./components/app-sidebar";
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
 import styles from "./app.sass";
 import { NoBackendDialog } from "./components/overlay/no-backend";
 import OnlineSVG from "./assets/undraw/online.svg";
+import { AppSidebar } from "./components/app-sidebar";
 
 const NilUUID = "00000000-0000-0000-0000-000000000000";
 

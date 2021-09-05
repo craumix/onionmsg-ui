@@ -2,7 +2,7 @@ import React from "react";
 import { FaPlay } from "react-icons/fa";
 import YouTube from "react-youtube";
 import {
-  constructYoutbeLink,
+  constructYoutubeLink,
   getYoutubeVideoMeta,
   YoutubeVideoMeta,
 } from "../../utils/youtube";
@@ -60,7 +60,7 @@ export class YoutubeContainer extends React.Component<
             textDecoration: "none",
             fontWeight: "bold",
           }}
-          href={constructYoutbeLink(this.props.id)}
+          href={constructYoutubeLink(this.props.id)}
         >
           {this.state.videoMeta?.title}
         </a>
@@ -73,7 +73,7 @@ export class YoutubeContainer extends React.Component<
                 playerVars: {
                   autoplay: 1,
                   modestbranding: 1,
-                  start: this.props.start ?? 0
+                  start: this.props.start ?? 0,
                 },
               }}
             />

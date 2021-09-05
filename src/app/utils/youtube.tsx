@@ -1,5 +1,5 @@
 var ytIdRegex = new RegExp(
-  /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)(?:(?:[\?\&]t=)([0-9]*))?/g
+  /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)(?:[\?\&]t=([0-9]*))?/g
 );
 
 /*
@@ -23,14 +23,14 @@ export interface YoutubeVideoMeta {
   thumbnail_height: number;
 }
 
-export function constructYoutbeLink(id: string): string {
-  return "https://www.youtube.com/watch?v=" + id;
+export function constructYoutubeLink(id: string, start?: number): string {
+  return "https://www.youtube.com/watch?v=" + id + (start ? "&t=" + start : "");
 }
 
 export function getYoutubeVideoMeta(id: string): Promise<YoutubeVideoMeta> {
   return fetch(
     "https://www.youtube.com/oembed?url=" +
-      constructYoutbeLink(id) +
+      constructYoutubeLink(id) +
       "&format=json"
   ).then((res) => res.json());
 }
@@ -42,7 +42,6 @@ export function findYoutubeIDs(text: string): [string, number][] {
     match = ytIdRegex.exec(text);
 
     if (match) {
-      console.log(match);
       ids.push([match[1], +match[2] ?? 0]);
     }
   } while (match);
