@@ -9,15 +9,19 @@ import {
 import { Avatar } from "../avatar";
 import { MessageContainer } from "./message-container";
 import styles from "./conversation-window.sass";
-import { FaPaperclip, FaUpload } from "react-icons/fa";
+import { FaFile, FaPaperclip, FaUpload } from "react-icons/fa";
 import { BiSticker } from "react-icons/bi";
 import { GrEmoji } from "react-icons/gr";
 import { ConversationSettings } from "../overlay/conversation-settings";
+import { ConfirmDialog } from "../overlay/confirm-dialog";
+import { filesizeFromPath, filenameFromPath } from "../../utils/file";
+import prettyBytes from "pretty-bytes";
 const dialog = window.require("electron").remote.dialog;
 
 export class ConversationWindow extends React.Component<any, any> {
   messagesEndRef: React.RefObject<HTMLDivElement>;
   convSettingsRef: React.RefObject<ConversationSettings>;
+  uploadConfirmDialog: React.RefObject<ConfirmDialog>;
 
   constructor(props: any) {
     super(props);
@@ -26,22 +30,32 @@ export class ConversationWindow extends React.Component<any, any> {
       messagesContainers: [],
       lastMessageSenderUUID: "",
       emojiSelectorVisible: false,
+      fileUploadPreview: null,
+      onUploadConfirm: () => {},
     };
 
     this.messagesEndRef = React.createRef();
     this.convSettingsRef = React.createRef();
+    this.uploadConfirmDialog = React.createRef();
   }
 
   render(): JSX.Element {
     return (
       <div className={styles.conversationContainer}>
         <ConversationSettings ref={this.convSettingsRef} uuid={this.uuid()} />
+        <ConfirmDialog
+          ref={this.uploadConfirmDialog}
+          title="Upload file"
+          onConfirm={this.state.onUploadConfirm}
+        >
+          {this.state.fileUploadPreview}
+        </ConfirmDialog>
 
         <FileDrop
           className={styles["file-drop"]}
           targetClassName={styles["file-drop-target"]}
           onDrop={(files, event) => {
-            this.sendFiles(files);
+            this.sendFiles(Array.from(files));
           }}
         >
           <FaUpload size="48" style={{ color: "#888" }} />
@@ -75,18 +89,11 @@ export class ConversationWindow extends React.Component<any, any> {
         <div className={styles.conversationFooter}>
           <textarea
             placeholder="Send a message here..."
-            style={{
-              border: "0px",
-              outline: "none",
-              margin: "8px",
-              fontSize: "16px",
-              resize: "none",
-              flexGrow: 1,
-            }}
+            className={styles.inputField}
             onPaste={(event) => {
               if (event.clipboardData.files.length > 0) {
                 event.preventDefault();
-                this.sendFiles(event.clipboardData.files);
+                this.sendFiles(Array.from(event.clipboardData.files));
               }
             }}
             onKeyDown={(event) => {
@@ -125,13 +132,9 @@ export class ConversationWindow extends React.Component<any, any> {
             onClick={() => {
               dialog
                 .showOpenDialog(null, {
-                  properties: ["openFile"],
+                  properties: ["openFile", "multiSelections"],
                 })
-                .then((result) =>
-                  result.filePaths.forEach((path) => {
-                    this.sendSingleFile(path);
-                  })
-                );
+                .then((result) => this.sendFiles(result.filePaths));
             }}
           >
             <FaPaperclip size="20" />
@@ -189,23 +192,48 @@ export class ConversationWindow extends React.Component<any, any> {
     return this.props.match.params.uuid;
   }
 
-  sendFiles(files: FileList): void {
-    Array.from(files).forEach((file) => {
-      //TODO add some kind of dialog
-      this.sendSingleFile(file);
-    });
+  sendFiles(files: File[] | string[], index: number = 0): void {
+    if (index < files.length) {
+      this.sendSingleFile(files[index], () => {
+        this.sendFiles(files, index + 1);
+      });
+    }
   }
 
-  sendSingleFile(file: string | File): void {
-    postFileToRoom(this.uuid(), file, (res: Response) => {
-      if (res.ok) {
-        console.log("File sent!");
+  sendSingleFile(file: string | File, onSuccess?: () => void): void {
+    let filename;
+    let filesize;
 
-        this.loadNextMessage();
-      } else {
-        console.log("Error sending file!\n" + res.text);
-      }
+    if (typeof file === "string") {
+      filename = filenameFromPath(file);
+      filesize = filesizeFromPath(file);
+    } else {
+      filename = file.name;
+      filesize = file.size;
+    }
+
+    this.setState({
+      fileUploadPreview: (
+        <div>
+          <FaFile />
+          <p>{filename + " (" + prettyBytes(filesize) + ")"}</p>
+        </div>
+      ),
+      onUploadConfirm: () => {
+        postFileToRoom(this.uuid(), file, (res: Response) => {
+          if (res.ok) {
+            this.loadNextMessage();
+
+            if (onSuccess) {
+              onSuccess();
+            }
+          } else {
+            console.log("Error sending file!\n" + res.text);
+          }
+        });
+      },
     });
+    this.uploadConfirmDialog.current.show();
   }
 
   hardReloadMessages(): void {

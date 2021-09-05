@@ -135,9 +135,6 @@ class ConversationListElement extends React.Component<ConversationListElementPro
         <ConfirmDialog
           ref={this.dialogRef}
           title="Leave Room"
-          text={
-            "Do you really want to leave room " + this.props.info.uuid + "?"
-          }
           onConfirm={() => {
             deleteRoom(this.props.info.uuid)
               .then((res) => res.text())
@@ -145,7 +142,11 @@ class ConversationListElement extends React.Component<ConversationListElementPro
                 console.log("Delete Room: " + msg);
               });
           }}
-        />
+        >
+          <p>
+            {"Do you really want to leave room " + this.props.info.uuid + "?"}
+          </p>
+        </ConfirmDialog>
         <Link
           className={styles.entryLinkContainer}
           to={"/c/" + this.props.info.uuid}

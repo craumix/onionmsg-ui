@@ -4,7 +4,6 @@ import styles from "./confirm-dialog.sass";
 
 interface ConfirmDialogProps {
   title: string;
-  text?: string;
   onConfirm?: () => void;
   onCancel?: () => void;
 }
@@ -21,9 +20,9 @@ export class ConfirmDialog extends React.Component<ConfirmDialogProps> {
   render(): JSX.Element {
     return (
       <AppOverlayMenu ref={this.overlayRef}>
-        <div>
+        <div style={{ minWidth: "250px" }}>
           <h1>{this.props.title}</h1>
-          <p>{this.props.text}</p>
+          {this.props.children}
           <div className={styles.buttonContainer}>
             <button
               className={styles.cancelButton}

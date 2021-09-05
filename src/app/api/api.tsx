@@ -1,6 +1,6 @@
 import mime from "mime";
-import { FSWatcher } from "original-fs";
 import { IMessageEvent } from "websocket";
+import { filenameFromPath } from "../utils/file";
 const stream = window.require("electron").remote.require("stream");
 const fs = window.require("electron").remote.require("fs");
 const fetch = window
@@ -116,7 +116,7 @@ export function postFileToRoom(
     return sendFile(
       uuid,
       fs.createReadStream(file),
-      file.replace(/^.*[\\\/]/, ""),
+      filenameFromPath(file),
       responseHandler
     );
   } else {
