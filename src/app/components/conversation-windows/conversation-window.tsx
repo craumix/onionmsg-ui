@@ -46,7 +46,9 @@ export class ConversationWindow extends React.Component<any, any> {
 
   render(): JSX.Element {
     return (
-      <div className={`${styles.conversationContainer} ${this.props.className}`}>
+      <div
+        className={`${styles.conversationContainer} ${this.props.className}`}
+      >
         <ConversationSettings ref={this.convSettingsRef} uuid={this.uuid()} />
         <ConfirmDialog
           ref={this.uploadConfirmDialog}
@@ -214,7 +216,12 @@ export class ConversationWindow extends React.Component<any, any> {
       this.setState({
         fileUploadPreview: (
           <div>
-            {imgURL && <img src={imgURL} />}
+            {imgURL && (
+              <img
+                style={{ maxWidth: "100%", maxHeight: "100%" }}
+                src={imgURL}
+              />
+            )}
             <p style={{ margin: "2px" }}>
               {filename + " (" + prettyBytes(filesize) + ")"}
             </p>
@@ -272,8 +279,8 @@ export class ConversationWindow extends React.Component<any, any> {
     );
   }
 
-  loadNextMessage(count?: number): void {
-    this.loadNewMessages(true, count ?? 1).then(() =>
+  loadNextMessage(count: number = 1): void {
+    this.loadNewMessages(true, count).then(() =>
       this.scrollMessageContainerDown()
     );
   }
