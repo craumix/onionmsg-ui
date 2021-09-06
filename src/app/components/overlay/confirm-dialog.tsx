@@ -10,13 +10,11 @@ interface ConfirmDialogProps {
 
 export class ConfirmDialog extends React.Component<ConfirmDialogProps> {
   overlayRef: React.RefObject<AppOverlayMenu>;
-  topDivRef: React.RefObject<HTMLDivElement>;
 
   constructor(props: ConfirmDialogProps) {
     super(props);
 
     this.overlayRef = React.createRef();
-    this.topDivRef = React.createRef();
   }
 
   render(): JSX.Element {
@@ -24,7 +22,6 @@ export class ConfirmDialog extends React.Component<ConfirmDialogProps> {
       <AppOverlayMenu ref={this.overlayRef}>
         <div
           style={{ minWidth: "250px", maxWidth: "500px" }}
-          ref={this.topDivRef}
           onKeyDown={(event) => {
             //TODO find out why these sometimes work when manually clicking the menu
             if (event.key === "Enter") this.confirm();
@@ -71,7 +68,6 @@ export class ConfirmDialog extends React.Component<ConfirmDialogProps> {
     this.overlayRef.current.setState({
       visible: true,
     });
-    this.topDivRef.current.focus();
   }
 
   hide(): void {
