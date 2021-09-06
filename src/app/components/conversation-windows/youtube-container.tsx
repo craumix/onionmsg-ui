@@ -71,6 +71,7 @@ export class YoutubeContainer extends React.Component<
               className={styles.videoFrame}
               opts={{
                 playerVars: {
+                  enablejsapi: 0,
                   autoplay: 1,
                   modestbranding: 1,
                   start: this.props.start ?? 0,

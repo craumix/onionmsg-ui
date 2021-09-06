@@ -21,6 +21,7 @@ import {
 } from "../../utils/file";
 import prettyBytes from "pretty-bytes";
 import mime from "mime";
+import { rndColorFromString } from "../../utils/color";
 const dialog = window.require("electron").remote.dialog;
 
 export class ConversationWindow extends React.Component<any, any> {
@@ -76,9 +77,9 @@ export class ConversationWindow extends React.Component<any, any> {
             style={{ marginLeft: "8px" }}
           />
           <h1
-          style={{
-            whiteSpace: "nowrap"
-          }}
+            style={{
+              whiteSpace: "nowrap",
+            }}
             onClick={() => {
               this.convSettingsRef.current.show();
             }}
@@ -361,7 +362,7 @@ class AuthorDivider extends React.Component<any> {
             marginTop: "8px",
             marginLeft: "64px",
             fontSize: "14px",
-            color: "purple",
+            color: rndColorFromString(this.props.author),
             fontWeight: "bold",
           }}
         >
