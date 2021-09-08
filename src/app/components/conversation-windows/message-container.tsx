@@ -11,10 +11,14 @@ import { BsThreeDots } from "react-icons/bs";
 import { Dropdown, DropdownEntry } from "../dropdown";
 import { ConversationWindow } from "./conversation-window";
 import { MessageSource } from "../overlay/message-source";
+import { rndColorFromString } from "../../utils/color";
+import { Avatar } from "../avatar";
 
 interface MessageContainerProps {
   message: ChatMessage;
-  convWindow: ConversationWindow;
+  authorHeader?: boolean;
+  parentContainer?: ConversationWindow;
+  autoHideTimestamp?: boolean;
 }
 
 interface MessageContainerState {
@@ -27,6 +31,10 @@ export class MessageContainer extends React.Component<
 > {
   optionsDropdownRef: React.RefObject<Dropdown>;
   messageSourceRef: React.RefObject<MessageSource>;
+
+  public static defaultProps = {
+    autoHideTimestamp: true,
+  };
 
   constructor(props: MessageContainerProps) {
     super(props);
@@ -60,9 +68,9 @@ export class MessageContainer extends React.Component<
           const newText =
             this.decodedMessageText().replace(/^/gm, "> ") +
             "\n\n" +
-            this.props.convWindow.state.messageInput;
+            this.props.parentContainer.state.messageInput;
 
-          this.props.convWindow.setState({
+          this.props.parentContainer.setState({
             messageInput: newText,
           });
         },
@@ -76,48 +84,84 @@ export class MessageContainer extends React.Component<
     }
 
     return (
-      <div
-        className={`${styles.messageContainer} ${
-          this.state?.optionsDropdownVisible ? styles.dropdownVisible : ""
-        }`}
-      >
-        <div className={styles.messageOptionsMenu}>
-          <button title="Reply">
-            <FaReply />
-          </button>
-          <button
-            onClick={() => {
-              this.optionsDropdownRef.current.show();
-            }}
-            title="Options"
+      <div>
+        {this.props.authorHeader ? (
+          <AuthorDivider author={this.props.message.meta.sender} />
+        ) : null}
+
+        <div
+          className={`${styles.messageContainer} ${
+            this.state?.optionsDropdownVisible ? styles.dropdownVisible : ""
+          } ${this.isTopLevel() ? styles.topLevelMessageContainer : ""}`}
+        >
+          <p
+            title={this.longTimestamp()}
+            className={`${styles.messageTimestamp} ${
+              this.props.autoHideTimestamp ? "" : styles.showTimestamp
+            }`}
           >
-            <BsThreeDots />
-          </button>
+            {this.shortTimestamp()}
+          </p>
+
+          {this.props.message.content.replyto ? (
+            <blockquote style={{ marginLeft: "64px", padding: "0px" }}>
+              <MessageContainer
+                message={this.props.message.content.replyto}
+                authorHeader={true}
+                autoHideTimestamp={this.props.autoHideTimestamp}
+              />
+            </blockquote>
+          ) : null}
+
+          {this.isTopLevel() ? (
+            <div>
+              <div className={styles.messageOptionsMenu}>
+                <button
+                  onClick={() => {
+                    this.props.parentContainer.setMessageToReply(
+                      this.props.message
+                    );
+                  }}
+                  title="Reply"
+                >
+                  <FaReply />
+                </button>
+                <button
+                  onClick={() => {
+                    this.optionsDropdownRef.current.show();
+                  }}
+                  title="Options"
+                >
+                  <BsThreeDots />
+                </button>
+              </div>
+              <Dropdown
+                top="4px"
+                right="8px"
+                onShow={() => {
+                  this.setState({
+                    optionsDropdownVisible: true,
+                  });
+                }}
+                onHide={() => {
+                  this.setState({
+                    optionsDropdownVisible: false,
+                  });
+                }}
+                ref={this.optionsDropdownRef}
+                entries={dropdownEntries}
+              />
+              <MessageSource
+                ref={this.messageSourceRef}
+                message={this.props.message}
+              />
+            </div>
+          ) : null}
+
+          <div className={styles.contentContainer}>
+            {this.displayComponent()}
+          </div>
         </div>
-        <Dropdown
-          top="4px"
-          right="8px"
-          onShow={() => {
-            this.setState({
-              optionsDropdownVisible: true,
-            });
-          }}
-          onHide={() => {
-            this.setState({
-              optionsDropdownVisible: false,
-            });
-          }}
-          ref={this.optionsDropdownRef}
-          entries={dropdownEntries}
-        />
-        <MessageSource
-          ref={this.messageSourceRef}
-          message={this.props.message}
-        />
-        <p title={this.longTimestamp()} className={styles.messageTimestamp}>
-          {this.shortTimestamp()}
-        </p>
-        <div className={styles.contentContainer}>{this.displayComponent()}</div>
       </div>
     );
   }
@@ -137,9 +181,15 @@ export class MessageContainer extends React.Component<
             <div className={styles.markdownContainer}>
               <MarkdownContent text={this.decodedMessageText()} />
             </div>
-            {findYoutubeIDs(this.decodedMessageText()).map((video: [string, number]) => (
-              <YoutubeContainer id={video[0]} start={video[1]} key={video[0]} />
-            ))}
+            {findYoutubeIDs(this.decodedMessageText()).map(
+              (video: [string, number]) => (
+                <YoutubeContainer
+                  id={video[0]}
+                  start={video[1]}
+                  key={video[0]}
+                />
+              )
+            )}
           </div>
         );
       case "mtype.cmd":
@@ -173,6 +223,11 @@ export class MessageContainer extends React.Component<
 
   longTimestamp(): string {
     return this.messageDate().toLocaleString();
+  }
+
+  isTopLevel(): boolean {
+    //TODO
+    return this.props.parentContainer ? true : false;
   }
 }
 
@@ -230,10 +285,7 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
             disablePictureInPicture
             preload="metadata"
           >
-            <source
-              src={this.blobUrl}
-              type={this.props.msgContent.blob.type}
-            />
+            <source src={this.blobUrl} type={this.props.msgContent.blob.type} />
             The format {this.props.msgContent.blob.type} is not supported!
           </video>
         );
@@ -248,10 +300,7 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
             }}
             preload="metadata"
           >
-            <source
-              src={this.blobUrl}
-              type={this.props.msgContent.blob.type}
-            />
+            <source src={this.blobUrl} type={this.props.msgContent.blob.type} />
             The format {this.props.msgContent.blob.type} is not supported!
           </audio>
         );
@@ -275,5 +324,45 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
           </div>
         );
     }
+  }
+}
+
+class AuthorDivider extends React.Component<any> {
+  render(): JSX.Element {
+    return (
+      <div
+        style={{
+          width: "calc(100% - 16px)",
+          height: "fit-content",
+          marginTop: "16px",
+          marginLeft: "8px",
+          marginRight: "8px",
+          marginBottom: "16px",
+        }}
+      >
+        <Avatar
+          style={{
+            marginLeft: "16px",
+            marginBottom: "-8px",
+            float: "left",
+            userSelect: "none",
+          }}
+          seed={this.props.author}
+          size={32}
+        />
+        <p
+          style={{
+            margin: "0px",
+            marginTop: "8px",
+            marginLeft: "64px",
+            fontSize: "14px",
+            color: rndColorFromString(this.props.author),
+            fontWeight: "bold",
+          }}
+        >
+          {this.props.author}
+        </p>
+      </div>
+    );
   }
 }

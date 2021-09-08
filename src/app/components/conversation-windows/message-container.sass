@@ -2,17 +2,20 @@
     position: relative
     width: auto
     height: fit-content
-    margin-left: 8px
-    margin-right: 64px
     border-radius: 4px
     padding-right: 32px
     min-height: 1em
+    &:hover
+        > .messageTimestamp
+            color: #888
+
+.topLevelMessageContainer
+    margin-left: 8px
+    margin-right: 64px
     border-left: solid 4px white
     &:hover, &.dropdownVisible
         background-color: #FAFAFA
         border-left: solid 4px blueviolet
-        .messageTimestamp
-            color: #888
         .messageOptionsMenu
             visibility: visible
 
@@ -22,8 +25,11 @@
     margin-left: 8px
     margin-top: 4px
     font-size: 10px
-    color: #FFF
     user-select: none
+    color: #FFF
+
+.showTimestamp
+    color: #888 !important
 
 .contentContainer
     font-size: 14px

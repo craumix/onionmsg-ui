@@ -9,7 +9,7 @@ import {
 import { Avatar } from "../avatar";
 import { MessageContainer } from "./message-container";
 import styles from "./conversation-window.sass";
-import { FaFile, FaPaperclip, FaUpload } from "react-icons/fa";
+import { FaBackspace, FaFile, FaPaperclip, FaUpload } from "react-icons/fa";
 import { BiSticker } from "react-icons/bi";
 import { GrEmoji } from "react-icons/gr";
 import { ConversationSettings } from "../overlay/conversation-settings";
@@ -24,7 +24,20 @@ import mime from "mime";
 import { rndColorFromString } from "../../utils/color";
 const dialog = window.require("electron").remote.dialog;
 
-export class ConversationWindow extends React.Component<any, any> {
+interface ConversationWindowState {
+  messageInput: string;
+  messageContainers: JSX.Element[];
+  lastMessageSenderUUID: string;
+  emojiSelectorVisible: boolean;
+  fileUploadPreview: JSX.Element;
+  onUploadConfirm: () => void;
+  replyTo: ChatMessage;
+}
+
+export class ConversationWindow extends React.Component<
+  any,
+  ConversationWindowState
+> {
   messagesEndRef: React.RefObject<HTMLDivElement>;
   convSettingsRef: React.RefObject<ConversationSettings>;
   uploadConfirmDialog: React.RefObject<ConfirmDialog>;
@@ -33,11 +46,12 @@ export class ConversationWindow extends React.Component<any, any> {
     super(props);
     this.state = {
       messageInput: "",
-      messagesContainers: [],
+      messageContainers: [],
       lastMessageSenderUUID: "",
       emojiSelectorVisible: false,
       fileUploadPreview: null,
       onUploadConfirm: () => {},
+      replyTo: undefined,
     };
 
     this.messagesEndRef = React.createRef();
@@ -94,9 +108,55 @@ export class ConversationWindow extends React.Component<any, any> {
             flexGrow: 1,
           }}
         >
-          <div>{this.state.messagesContainers}</div>
+          <div>{this.state.messageContainers}</div>
           <div ref={this.messagesEndRef} />
         </div>
+        {this.state.replyTo ? (
+          <div
+            style={{
+              //TODO fix height to use scroll
+              maxHeight: "33%",
+              //overflowY: "scroll",
+              backgroundColor: "#FFF",
+              width: "100%",
+              boxShadow: "10px -10px 5px -3px #CCC",
+              borderRadius: "0px",
+              display: "flex",
+              flexDirection: "column",
+              zIndex: 1,
+            }}
+          >
+            <div
+              style={{
+                display: "flex",
+                justifyContent: "space-between",
+                margin: "8px",
+                flexShrink: 0,
+                color: "#AAA",
+              }}
+            >
+              <p>Replying</p>
+              <button
+                style={{ backgroundColor: "#FFF" }}
+                onClick={() => this.clearToReply()}
+              >
+                <FaBackspace
+                  style={{
+                    color: "#AAA",
+                  }}
+                  size="20"
+                />
+              </button>
+            </div>
+            <div style={{ overflowY: "scroll" }}>
+              <MessageContainer
+                authorHeader={true}
+                message={this.state.replyTo}
+                autoHideTimestamp={false}
+              />
+            </div>
+          </div>
+        ) : null}
         <div className={styles.conversationFooter}>
           <textarea
             placeholder="Send a message here..."
@@ -117,19 +177,24 @@ export class ConversationWindow extends React.Component<any, any> {
                   return;
                 }
 
-                postMessageToRoom(this.uuid(), this.state.messageInput).then(
-                  (res) => {
-                    if (res.ok) {
-                      console.log("Message sent!");
-                      this.setState({
-                        messageInput: "",
-                      });
-                      this.loadNextMessage();
-                    } else {
-                      console.log("Error sending message!\n" + res.text);
-                    }
+                postMessageToRoom(
+                  this.uuid(),
+                  this.state.messageInput,
+                  this.state.replyTo
+                ).then((res) => {
+                  if (res.ok) {
+                    console.log("Message sent!");
+                    this.setState({
+                      messageInput: "",
+                    });
+
+                    this.clearToReply();
+
+                    this.loadNextMessage();
+                  } else {
+                    console.log("Error sending message!\n" + res.text);
                   }
-                );
+                });
               }
             }}
             value={this.state.messageInput}
@@ -196,6 +261,7 @@ export class ConversationWindow extends React.Component<any, any> {
   componentDidUpdate(prevProps: any): void {
     if (this.uuid() != prevProps.match.params.uuid) {
       this.hardReloadMessages();
+      this.clearToReply();
     }
   }
 
@@ -216,7 +282,11 @@ export class ConversationWindow extends React.Component<any, any> {
     //8 MiB
     const uploadPreviewMaxSize = 8388608;
 
-    const showDialog = (filename: string, filesize: number, imgURL?: string) => {
+    const showDialog = (
+      filename: string,
+      filesize: number,
+      imgURL?: string
+    ) => {
       this.setState({
         fileUploadPreview: (
           <div>
@@ -235,17 +305,24 @@ export class ConversationWindow extends React.Component<any, any> {
           </div>
         ),
         onUploadConfirm: () => {
-          postFileToRoom(this.uuid(), file, (res: Response) => {
-            if (res.ok) {
-              this.loadNextMessage();
+          postFileToRoom(
+            this.uuid(),
+            file,
+            (res: Response) => {
+              if (res.ok) {
+                this.clearToReply();
 
-              if (onSuccess) {
-                onSuccess();
+                this.loadNextMessage();
+
+                if (onSuccess) {
+                  onSuccess();
+                }
+              } else {
+                console.log("Error sending file!\n" + res.text);
               }
-            } else {
-              console.log("Error sending file!\n" + res.text);
-            }
-          });
+            },
+            this.state.replyTo
+          );
         },
       });
       this.uploadConfirmDialog.current.show();
@@ -296,31 +373,29 @@ export class ConversationWindow extends React.Component<any, any> {
     return fetchRoomMessages(this.uuid(), count)
       .then((res) => res.json())
       .then((result) => {
-        const foo: JSX.Element[] = append ? this.state.messagesContainers : [];
+        const foo: JSX.Element[] = append ? this.state.messageContainers : [];
         let lastSender = append ? this.state.lastMessageSenderUUID : "";
+
         if (result != null) {
           result.forEach((element: ChatMessage, index: number) => {
-            if (lastSender != element.meta.sender) {
-              foo.push(
-                <AuthorDivider
-                  author={element.meta.sender}
-                  key={"author " + element.sig}
-                />
-              );
+            let showHeader = lastSender != element.meta.sender;
+            if (showHeader) {
               lastSender = element.meta.sender;
             }
+
             foo.push(
               <MessageContainer
-                convWindow={this}
                 message={element}
-                key={"message " + element.sig}
+                key={element.sig}
+                authorHeader={showHeader}
+                parentContainer={this}
               />
             );
           });
         }
 
         this.setState({
-          messagesContainers: foo,
+          messageContainers: foo,
           lastMessageSenderUUID: lastSender,
         });
       });
@@ -331,44 +406,16 @@ export class ConversationWindow extends React.Component<any, any> {
       behavior: auto ? "auto" : "smooth",
     });
   }
-}
 
-class AuthorDivider extends React.Component<any> {
-  render(): JSX.Element {
-    return (
-      <div
-        style={{
-          width: "calc(100% - 16px)",
-          height: "fit-content",
-          marginTop: "16px",
-          marginLeft: "8px",
-          marginRight: "8px",
-          marginBottom: "16px",
-        }}
-      >
-        <Avatar
-          style={{
-            marginLeft: "16px",
-            marginBottom: "-8px",
-            float: "left",
-            userSelect: "none",
-          }}
-          seed={this.props.author}
-          size={32}
-        />
-        <p
-          style={{
-            margin: "0px",
-            marginTop: "8px",
-            marginLeft: "64px",
-            fontSize: "14px",
-            color: rndColorFromString(this.props.author),
-            fontWeight: "bold",
-          }}
-        >
-          {this.props.author}
-        </p>
-      </div>
-    );
+  setMessageToReply(msg: ChatMessage): void {
+    this.setState({
+      replyTo: msg,
+    });
+  }
+
+  clearToReply(): void {
+    this.setState({
+      replyTo: undefined,
+    });
   }
 }

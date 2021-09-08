@@ -16,6 +16,7 @@ interface MessageMeta {
 
 interface MessageContent {
   type: "mtype.text" | "mtype.cmd" | "mtype.file" | "mtype.sticker";
+  replyto: ChatMessage;
   blob: BlobMeta;
   data: string;
 }

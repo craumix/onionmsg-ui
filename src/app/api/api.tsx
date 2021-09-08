@@ -7,6 +7,8 @@ const fetch = window
   .require("electron")
   .remote.require("electron-fetch").default;
 
+const replyToHeader = "X-ReplyTo";
+
 export interface DaemonNotification {
   type: string;
   data: any;
@@ -31,20 +33,20 @@ export function constructAPIUrl(
 }
 
 function apiGET(endpoint: string, form?: Map<string, any>): Promise<Response> {
-  return fetch(constructAPIUrl(endpoint, form), {
-    //mode: "no-cors",
-  });
+  return fetch(constructAPIUrl(endpoint, form));
 }
 
+//TODO fix header usage
 function apiPOST(
   endpoint: string,
   data: any,
-  form?: Map<string, any>
+  form?: Map<string, any>,
+  headers?: any
 ): Promise<Response> {
   return fetch(constructAPIUrl(endpoint, form), {
-    //mode: "no-cors",
     method: "POST",
     body: data,
+    headers: headers,
   });
 }
 
@@ -102,22 +104,34 @@ export function fetchTorinfo(): Promise<Response> {
 
 export function postMessageToRoom(
   uuid: string,
-  data: string
+  data: string,
+  replyto?: ChatMessage
 ): Promise<Response> {
-  return apiPOST("/room/send/message", data, new Map([["uuid", uuid]]));
+  return apiPOST(
+    "/room/send/message",
+    data,
+    new Map([["uuid", uuid]]),
+    replyto
+      ? {
+          [replyToHeader]: JSON.stringify(replyto),
+        }
+      : {}
+  );
 }
 
 export function postFileToRoom(
   uuid: string,
   file: string | File,
-  responseHandler?: (response: Response) => void
+  responseHandler?: (response: Response) => void,
+  replyto?: ChatMessage
 ): void {
   if (typeof file === "string") {
     return sendFile(
       uuid,
       fs.createReadStream(file),
       filenameFromPath(file),
-      responseHandler
+      responseHandler,
+      replyto
     );
   } else {
     file.arrayBuffer().then((res) => {
@@ -125,7 +139,8 @@ export function postFileToRoom(
         uuid,
         stream.Readable.from([new Uint8Array(res)]),
         file.name,
-        responseHandler
+        responseHandler,
+        replyto
       );
     });
   }
@@ -135,7 +150,8 @@ function sendFile(
   uuid: string,
   filestream: any,
   filename: string,
-  responseHandler?: (response: Response) => void
+  responseHandler?: (response: Response) => void,
+  replyto?: ChatMessage
 ): void {
   apiPOST(
     "/room/send/file",
@@ -144,7 +160,12 @@ function sendFile(
       ["uuid", uuid],
       ["filename", filename],
       ["mimetype", mime.getType(filename)],
-    ])
+    ]),
+    replyto
+      ? {
+          [replyToHeader]: JSON.stringify(replyto),
+        }
+      : {}
   ).then(responseHandler ?? (() => {}));
 }
 
