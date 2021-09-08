@@ -135,7 +135,7 @@ export class ConversationWindow extends React.Component<
                 color: "#AAA",
               }}
             >
-              <p>Replying</p>
+              <p style={{ margin: "4px 0px" }}>Replying</p>
               <button
                 style={{ backgroundColor: "#FFF" }}
                 onClick={() => this.clearToReply()}

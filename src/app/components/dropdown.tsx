@@ -57,7 +57,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
             height: "100%",
             top: "0px",
             left: "0px",
-            zIndex: 1,
+            zIndex: 100,
           }}
         />
 
@@ -69,7 +69,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
             backgroundColor: "white",
             borderRadius: "4px",
             filter: "drop-shadow(0 0 0.25rem lightgrey)",
-            zIndex: 2,
+            zIndex: 101,
             width: "fit-content",
           }}
         >
