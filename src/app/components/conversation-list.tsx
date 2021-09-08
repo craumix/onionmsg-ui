@@ -34,9 +34,10 @@ export class ConversationList extends React.Component<
     fetchRoomList()
       .then((res) => res.json())
       .then((result) => {
-        this.setState({
-          elements: result,
-        });
+        if (result != null)
+          this.setState({
+            elements: result,
+          });
       });
   }
 

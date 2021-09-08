@@ -189,8 +189,8 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
     this.blobUrl = constructAPIUrl(
       "/blob",
       new Map([
-        ["uuid", this.props.msgContent.meta.blobUUID],
-        ["filename", this.props.msgContent.meta.filename],
+        ["uuid", this.props.msgContent.blob.uuid],
+        ["filename", this.props.msgContent.blob.name],
       ])
     );
   }
@@ -202,16 +202,16 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
         <br />
         <a
           href={this.blobUrl}
-          download={this.props.msgContent.meta.filename}
+          download={this.props.msgContent.blob.name}
           style={{
             textDecoration: "none",
             color: "blueviolet",
           }}
         >
           Download{" "}
-          {this.props.msgContent.meta.filename +
+          {this.props.msgContent.blob.name +
             " (" +
-            prettyBytes(this.props.msgContent.meta.filesize ?? 0) +
+            prettyBytes(this.props.msgContent.blob.size ?? 0) +
             ")"}
         </a>
       </div>
@@ -219,7 +219,7 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
   }
 
   filePreview(): JSX.Element {
-    switch (this.props.msgContent.meta.mimetype?.split("/")[0]) {
+    switch (this.props.msgContent.blob.type?.split("/")[0]) {
       case "image":
         return <img src={this.blobUrl} />;
       case "video":
@@ -232,9 +232,9 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
           >
             <source
               src={this.blobUrl}
-              type={this.props.msgContent.meta.mimetype}
+              type={this.props.msgContent.blob.type}
             />
-            The format {this.props.msgContent.meta.mimetype} is not supported!
+            The format {this.props.msgContent.blob.type} is not supported!
           </video>
         );
       case "audio":
@@ -250,9 +250,9 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
           >
             <source
               src={this.blobUrl}
-              type={this.props.msgContent.meta.mimetype}
+              type={this.props.msgContent.blob.type}
             />
-            The format {this.props.msgContent.meta.mimetype} is not supported!
+            The format {this.props.msgContent.blob.type} is not supported!
           </audio>
         );
       default:
@@ -271,7 +271,7 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
             <div className={styles.attachmentIconBox}>
               <FaPaperclip style={{ color: "#AAA" }} />
             </div>
-            {this.props.msgContent.meta.filename}
+            {this.props.msgContent.blob.name}
           </div>
         );
     }
