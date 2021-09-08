@@ -3,7 +3,7 @@ export function rndColorFromString(text: string): string {
 }
 
 function stringHash(text: string): number {
-  var hash = 0,
+  let hash = 0,
     i,
     chr;
   if (text.length === 0) return hash;
@@ -29,7 +29,7 @@ function HSBtoRGBHex(h: number, s: number, b: number): string {
 }
 
 function rgbToHex(r: number, g: number, b: number) {
-  let toHex = (num: number) => {
+  const toHex = (num: number) => {
     let hex = Math.floor(num).toString(16);
     if (hex.length < 2) hex = "0" + hex;
     return hex;

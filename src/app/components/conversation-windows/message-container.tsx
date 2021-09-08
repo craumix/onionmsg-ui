@@ -40,7 +40,7 @@ export class MessageContainer extends React.Component<
   }
 
   render(): JSX.Element {
-    let dropdownEntries: DropdownEntry[] = [
+    const dropdownEntries: DropdownEntry[] = [
       {
         element: (
           <div>
@@ -57,7 +57,7 @@ export class MessageContainer extends React.Component<
     if (this.props.message.content.type === "mtype.text") {
       dropdownEntries.push({
         onClick: () => {
-          let newText =
+          const newText =
             this.decodedMessageText().replace(/^/gm, "> ") +
             "\n\n" +
             this.props.convWindow.state.messageInput;
@@ -127,7 +127,7 @@ export class MessageContainer extends React.Component<
   }
 
   displayComponent(): JSX.Element {
-    let msgContent = this.props.message.content;
+    const msgContent = this.props.message.content;
 
     switch (msgContent.type) {
       case "mtype.text":

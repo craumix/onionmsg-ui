@@ -16,15 +16,15 @@ interface MessageMeta {
 
 interface MessageContent {
   type: "mtype.text" | "mtype.cmd" | "mtype.file" | "mtype.sticker";
-  meta: ContentMeta;
+  blob: BlobMeta;
   data: string;
 }
 
-interface ContentMeta {
-  blobUUID: string;
-  filename: string;
-  mimetype: string;
-  filesize: number;
+interface BlobMeta {
+  uuid: string;
+  name: string;
+  type: string;
+  size: number;
 }
 
 interface ChatMessage {

@@ -73,7 +73,7 @@ export class ConversationList extends React.Component<
   }
 
   pushConversations(...infos: ConversationInfo[]): void {
-    let newElements = this.state.elements;
+    const newElements = this.state.elements;
     infos.forEach((e) => {
       newElements.push(e);
     });

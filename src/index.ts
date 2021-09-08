@@ -48,8 +48,8 @@ const createWindow = (): void => {
 app.on("ready", createWindow);
 
 //TODO Fix later and remove wildcard
-let backend = "localhost:10052";
-let google =
+const backend = "localhost:10052";
+const google =
   "*.youtube.com youtube.com " +
   "*.ytimg.com ytimg.com " +
   "*.gstatic.com gstatic.com " +

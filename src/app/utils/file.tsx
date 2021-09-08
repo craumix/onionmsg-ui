@@ -5,7 +5,7 @@ export function filenameFromPath(path: string): string {
 }
 
 export function filesizeFromPath(path: string): number {
-  let stat = fs.statSync(path);
+  const stat = fs.statSync(path);
   return stat.size;
 }
 

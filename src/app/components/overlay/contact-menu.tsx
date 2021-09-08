@@ -126,7 +126,7 @@ class RoomCreationContainer extends React.Component<
   }
 
   createRoom(): void {
-    let ids: Array<string> = [];
+    const ids: Array<string> = [];
 
     this.state.tags.forEach((element: TagElement) => {
       ids.push(element.text);

@@ -203,7 +203,7 @@ export class ConversationWindow extends React.Component<any, any> {
     return this.props.match.params.uuid;
   }
 
-  sendFiles(files: File[] | string[], index: number = 0): void {
+  sendFiles(files: File[] | string[], index = 0): void {
     if (index < files.length) {
       this.sendSingleFile(files[index], () => {
         this.sendFiles(files, index + 1);
@@ -216,7 +216,7 @@ export class ConversationWindow extends React.Component<any, any> {
     //8 MiB
     const uploadPreviewMaxSize = 8388608;
 
-    let showDialog = (filename: string, filesize: number, imgURL?: string) => {
+    const showDialog = (filename: string, filesize: number, imgURL?: string) => {
       this.setState({
         fileUploadPreview: (
           <div>
@@ -252,8 +252,8 @@ export class ConversationWindow extends React.Component<any, any> {
     };
 
     if (typeof file === "string") {
-      let filename = filenameFromPath(file);
-      let filesize = filesizeFromPath(file);
+      const filename = filenameFromPath(file);
+      const filesize = filesizeFromPath(file);
 
       if (
         mime.getType(filename).startsWith("image") &&
@@ -286,7 +286,7 @@ export class ConversationWindow extends React.Component<any, any> {
     );
   }
 
-  loadNextMessage(count: number = 1): void {
+  loadNextMessage(count = 1): void {
     this.loadNewMessages(true, count).then(() =>
       this.scrollMessageContainerDown()
     );

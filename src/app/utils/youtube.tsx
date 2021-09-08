@@ -1,4 +1,4 @@
-var ytIdRegex = new RegExp(
+const ytIdRegex = new RegExp(
   /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)(?:[\?\&]t=([0-9]*))?/g
 );
 
@@ -36,7 +36,7 @@ export function getYoutubeVideoMeta(id: string): Promise<YoutubeVideoMeta> {
 }
 
 export function findYoutubeIDs(text: string): [string, number][] {
-  let ids: [string, number][] = [];
+  const ids: [string, number][] = [];
   let match: RegExpExecArray;
   do {
     match = ytIdRegex.exec(text);
