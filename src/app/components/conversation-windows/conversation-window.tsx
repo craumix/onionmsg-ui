@@ -233,6 +233,7 @@ export class ConversationWindow extends React.Component<
               position: "absolute",
               bottom: "48px",
               right: "0px",
+              zIndex: 1
             }}
             onBlur={() => {
               this.setState({
@@ -378,7 +379,7 @@ export class ConversationWindow extends React.Component<
 
         if (result != null) {
           result.forEach((element: ChatMessage, index: number) => {
-            let showHeader = lastSender != element.meta.sender;
+            const showHeader = lastSender != element.meta.sender;
             if (showHeader) {
               lastSender = element.meta.sender;
             }

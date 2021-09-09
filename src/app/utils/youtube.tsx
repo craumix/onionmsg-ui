@@ -41,7 +41,8 @@ export function findYoutubeIDs(text: string): [string, number][] {
   do {
     match = ytIdRegex.exec(text);
 
-    if (match) {
+    //Prevent some false positives
+    if (match && match[0].includes("you")) {
       ids.push([match[1], +match[2] ?? 0]);
     }
   } while (match);

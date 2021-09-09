@@ -198,6 +198,7 @@ export class MessageContainer extends React.Component<
             style={{
               fontFamily: "monospace",
               color: "grey",
+              margin: "0px",
             }}
           >
             {"Command: " + this.decodedMessageText()}
