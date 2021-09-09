@@ -5,6 +5,8 @@ import {
   Redirect,
   Route,
   Switch,
+  useHistory,
+  withRouter,
 } from "react-router-dom";
 import { ConversationWindow } from "./components/conversation-windows/conversation-window";
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
@@ -25,15 +27,21 @@ function render() {
     if (notification.type === "NewMessage") {
       //Do notifications
       if (
-        ConversationWindowRef.current &&
-        ConversationWindowRef.current.props.match.params.uuid ===
-          notification.data.uuid
+        ConversationWindowRef.current?.props.match.params.uuid ===
+        notification.data.uuid
       ) {
-        console.log("callback");
-        ConversationWindowRef.current.loadNextMessage(notification.data.length);
+        ConversationWindowRef.current.loadNextMessage(
+          notification.data.messages.length
+        );
       }
     } else if (notification.type === "NewRoom") {
       AppSidebarRef.current.conversationListRef.current.pushConversations(
+        notification.data
+      );
+      //TODO make this less hacky and not depend on the Sidebar for the history
+      AppSidebarRef.current.props.history.push("/c/" + notification.data.uuid);
+    } else if (notification.type === "NewRequest") {
+      AppSidebarRef.current.requestListRef.current.pushRequest(
         notification.data
       );
     }
@@ -63,7 +71,7 @@ function render() {
                         alignItems: "center",
                         justifyContent: "center",
                         flexDirection: "column",
-                        overflow: "hidden"
+                        overflow: "hidden",
                       }}
                     >
                       {

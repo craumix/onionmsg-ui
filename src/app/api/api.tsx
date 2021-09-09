@@ -176,3 +176,15 @@ export function deleteRoom(uuid: string): Promise<Response> {
 export function createNewRoom(ids: Array<string>): Promise<Response> {
   return apiPOST("/room/create", JSON.stringify(ids));
 }
+
+export function fetchRequestList(): Promise<Response> {
+  return apiGET("/request/list");
+}
+
+export function acceptRequest(uuid: string): Promise<Response> {
+  return apiGET("/request/accept", new Map([["uuid", uuid]]));
+}
+
+export function deleteRequest(uuid: string): Promise<Response> {
+  return apiGET("/request/delete", new Map([["uuid", uuid]]));
+}

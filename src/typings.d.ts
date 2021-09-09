@@ -41,3 +41,9 @@ interface ConversationInfo {
   name: string;
   nicks: Map<string, string>;
 }
+
+interface RoomRequest {
+  room: { uuid: string };
+  via: string;
+  id: string;
+}

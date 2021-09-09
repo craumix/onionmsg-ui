@@ -56,7 +56,10 @@ export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
     );
   }
 
-  componentDidMount(): void {
+  show(): void {
+    this.overlayRef.current.setState({
+      visible: true,
+    });
     fetchTorinfo()
       .then((res) => res.json())
       .then((response) => {
@@ -66,9 +69,13 @@ export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
       });
   }
 
-  show(): void {
-    this.overlayRef.current.setState({
-      visible: true,
-    });
+  loadLog(): void {
+    fetchTorinfo()
+      .then((res) => res.json())
+      .then((response) => {
+        this.setState({
+          tor: response,
+        });
+      });
   }
 }
