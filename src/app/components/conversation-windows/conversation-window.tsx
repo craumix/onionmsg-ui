@@ -233,7 +233,7 @@ export class ConversationWindow extends React.Component<
               position: "absolute",
               bottom: "48px",
               right: "0px",
-              zIndex: 1
+              zIndex: 1,
             }}
             onBlur={() => {
               this.setState({

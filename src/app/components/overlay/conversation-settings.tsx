@@ -1,6 +1,10 @@
 import React from "react";
 import { fetchRoomInfo } from "../../api/api";
 import { AppOverlayMenu } from "./app-overlay";
+//TODO make own stylesheet
+import styles from "./message-source.sass";
+import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 
 interface ConversationSettingsProps {
   uuid: string;
@@ -30,12 +34,12 @@ export class ConversationSettings extends React.Component<
       <AppOverlayMenu ref={this.overlayRef}>
         <h1>{"Room Settings - " + this.props.uuid}</h1>
         <SyntaxHighlighter
-            className={styles.jsonContainer}
-            style={coy}
-            language="json"
-            showLineNumbers={true}
-            PreTag="div"
-            children={JSON.stringify(this.state.info, null, 2)}
+          className={styles.jsonContainer}
+          style={coy}
+          language="json"
+          showLineNumbers={true}
+          PreTag="div"
+          children={JSON.stringify(this.state.info, null, 2)}
         />
       </AppOverlayMenu>
     );

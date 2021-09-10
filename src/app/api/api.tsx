@@ -8,6 +8,8 @@ const fetch = window
   .remote.require("electron-fetch").default;
 
 const replyToHeader = "X-ReplyTo";
+const filenameHeader = "X-Filename";
+const mimetypeHeader = "X-Mimetype";
 
 export interface DaemonNotification {
   type: string;
@@ -66,8 +68,8 @@ export function fetchStatus(): Promise<Response> {
   return apiGET("/status");
 }
 
-export function fetchRoomInfo(id: string): Promise<Response> {
-  return apiGET("/room/info", new Map([["id", id]]));
+export function fetchRoomInfo(uuid: string): Promise<Response> {
+  return apiGET("/room/info", new Map([["uuid", uuid]]));
 }
 
 export function fetchRoomList(): Promise<Response> {
@@ -94,8 +96,8 @@ export function createContactID(): Promise<Response> {
   return apiGET("/contact/create");
 }
 
-export function deleteContactID(id: string): Promise<Response> {
-  return apiGET("/contact/delete", new Map([["id", id]]));
+export function deleteContactID(fingerprint: string): Promise<Response> {
+  return apiGET("/contact/delete", new Map([["fingerprint", fingerprint]]));
 }
 
 export function fetchTorinfo(): Promise<Response> {
@@ -152,20 +154,20 @@ function sendFile(
   filename: string,
   responseHandler?: (response: Response) => void,
   replyto?: ChatMessage
-): void {
+) {
+  let headers: {
+    [replyToHeader]?: string;
+    [filenameHeader]: string;
+    [mimetypeHeader]: string;
+  } = { [filenameHeader]: filename, [mimetypeHeader]: mime.getType(filename) };
+
+  if (replyto) headers[replyToHeader] = JSON.stringify(replyto);
+
   apiPOST(
     "/room/send/file",
     filestream,
-    new Map([
-      ["uuid", uuid],
-      ["filename", filename],
-      ["mimetype", mime.getType(filename)],
-    ]),
-    replyto
-      ? {
-          [replyToHeader]: JSON.stringify(replyto),
-        }
-      : {}
+    new Map([["uuid", uuid]]),
+    headers
   ).then(responseHandler ?? (() => {}));
 }
 
