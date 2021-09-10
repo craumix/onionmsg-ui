@@ -1,5 +1,6 @@
 import React from "react";
 import { acceptRequest, deleteRequest, fetchRequestList } from "../api/api";
+import styles from "./request-list.sass";
 
 interface RequestListProps {}
 
@@ -27,34 +28,21 @@ export class RequestList extends React.Component<
           padding: "4px",
           boxSizing: "border-box",
           margin: "0px",
+          width: "100%"
         }}
       >
         {this.state.requests.map((req) => {
           return (
-            <li
-              key={req.id}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                marginBottom: "8px",
-              }}
-            >
+            <li key={req.uuid} className={styles.requestContainer}>
               <div
                 style={{
                   marginBottom: "4px",
                 }}
               >
+                <p>{req.room.uuid?.split("-")[0]}</p>
                 <p
                   style={{
-                    margin: "0px",
-                  }}
-                >
-                  {req.room.uuid?.split("-")[0]}
-                </p>
-                <p
-                  style={{
-                    margin: "0px",
-                    fontSize: "10px",
+                    fontSize: "9px",
                     color: "#666",
                   }}
                 >
@@ -66,9 +54,10 @@ export class RequestList extends React.Component<
                 <button
                   style={{
                     color: "blueviolet",
+                    backgroundColor: "rgba(0, 0, 0, 0)"
                   }}
                   onClick={() => {
-                    deleteRequest(req.id).then((res) => {
+                    deleteRequest(req.uuid).then((res) => {
                       if (res.ok) this.removeRequest(req);
                     });
                   }}
@@ -83,7 +72,7 @@ export class RequestList extends React.Component<
                     width: "33%",
                   }}
                   onClick={() => {
-                    acceptRequest(req.id).then((res) => {
+                    acceptRequest(req.uuid).then((res) => {
                       if (res.ok) this.removeRequest(req);
                     });
                   }}

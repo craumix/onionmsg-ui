@@ -164,12 +164,7 @@ class ConversationListElement extends React.Component<ConversationListElementPro
             {this.props.info.name ?? this.props.info.uuid?.split("-")[0]}
           </p>
           <button
-            style={{
-              height: "20px",
-              background: "none",
-              marginLeft: "auto",
-              marginRight: "10px",
-            }}
+            className={styles.entryOptions}
             onClick={(event: React.MouseEvent<HTMLElement>) => {
               event.nativeEvent.preventDefault();
               event.stopPropagation();

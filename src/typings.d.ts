@@ -45,5 +45,5 @@ interface ConversationInfo {
 interface RoomRequest {
   room: { uuid: string };
   via: string;
-  id: string;
+  uuid: string;
 }
