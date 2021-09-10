@@ -29,6 +29,14 @@ export class ConversationSettings extends React.Component<
     return (
       <AppOverlayMenu ref={this.overlayRef}>
         <h1>{"Room Settings - " + this.props.uuid}</h1>
+        <SyntaxHighlighter
+            className={styles.jsonContainer}
+            style={coy}
+            language="json"
+            showLineNumbers={true}
+            PreTag="div"
+            children={JSON.stringify(this.state.info, null, 2)}
+        />
       </AppOverlayMenu>
     );
   }
