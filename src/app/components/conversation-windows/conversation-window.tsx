@@ -227,29 +227,25 @@ export class ConversationWindow extends React.Component<
           <button>
             <BiSticker size="20" />
           </button>
-          <div
-            hidden={!this.state.emojiSelectorVisible}
-            style={{
-              position: "absolute",
-              bottom: "48px",
-              right: "0px",
-              zIndex: 1,
-            }}
-            onBlur={() => {
-              this.setState({
-                emojiSelectorVisible: false,
-              });
-            }}
-          >
-            <EmojiPicker
-              native={true}
-              onEmojiClick={(event, emojiObject) =>
-                this.setState({
-                  messageInput: this.state.messageInput + emojiObject.emoji,
-                })
-              }
-            />
-          </div>
+          {this.state.emojiSelectorVisible ? (
+            <div
+              style={{
+                position: "absolute",
+                bottom: "48px",
+                right: "0px",
+                zIndex: 1,
+              }}
+            >
+              <EmojiPicker
+                native={true}
+                onEmojiClick={(event, emojiObject) =>
+                  this.setState({
+                    messageInput: this.state.messageInput + emojiObject.emoji,
+                  })
+                }
+              />
+            </div>
+          ) : null}
         </div>
       </div>
     );
