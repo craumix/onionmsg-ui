@@ -1,7 +1,7 @@
 import React from "react";
 import { ConversationList } from "./conversation-list";
 import styles from "./app-sidebar.sass";
-import { FaCog, FaPlus, FaServer } from "react-icons/fa";
+import { FaBackspace, FaCog, FaPlus, FaSearch, FaServer } from "react-icons/fa";
 import { ContactMenu } from "./overlay/contact-menu";
 import { BackendInfo } from "./overlay/backend-info";
 import { RequestList } from "./request-list";
@@ -12,7 +12,14 @@ interface AppSidebarProps {
   history?: any;
 }
 
-export class AppSidebar extends React.Component<AppSidebarProps> {
+interface AppSidebarState {
+  filter: string;
+}
+
+export class AppSidebar extends React.Component<
+  AppSidebarProps,
+  AppSidebarState
+> {
   conversationListRef: React.RefObject<ConversationList>;
   requestListRef: React.RefObject<RequestList>;
   contactMenuRef: React.RefObject<ContactMenu>;
@@ -20,6 +27,10 @@ export class AppSidebar extends React.Component<AppSidebarProps> {
 
   constructor(props: any) {
     super(props);
+
+    this.state = {
+      filter: "",
+    };
 
     this.conversationListRef = React.createRef();
     this.requestListRef = React.createRef();
@@ -64,14 +75,27 @@ export class AppSidebar extends React.Component<AppSidebarProps> {
         </div>
 
         <div className={styles.searchInputContainer}>
+          <div>
+            <FaSearch
+              style={{
+                color: "#888",
+              }}
+            />
+          </div>
           <input
-            placeholder="Filter all conversations"
+            placeholder="Filter"
             className={styles.searchInput}
             type="text"
+            value={this.state.filter}
             onChange={(event) => {
-              this.conversationListRef.current.setFilter(event.target.value);
+              this.setFilter(event.target.value);
             }}
           />
+          {this.state.filter != "" ? (
+            <button onClick={() => this.setFilter("")}>
+              <FaBackspace size="18" />
+            </button>
+          ) : null}
         </div>
         <RequestList ref={this.requestListRef} />
         <ConversationList
@@ -80,5 +104,12 @@ export class AppSidebar extends React.Component<AppSidebarProps> {
         />
       </div>
     );
+  }
+
+  setFilter(filter: string) {
+    this.setState({
+      filter: filter,
+    });
+    this.conversationListRef.current.setFilter(filter);
   }
 }
