@@ -1,17 +1,11 @@
-const fs = window.require("electron").remote.require("fs");
-
 export function filenameFromPath(path: string): string {
-  return path.replace(/^.*[\\\/]/, "");
+  return path.replace(/^.*[\\/]/, "");
 }
 
-export function filesizeFromPath(path: string): number {
-  const stat = fs.statSync(path);
-  return stat.size;
+export function filesizeFromPath(path: string): Promise<number> {
+  return window.ipc.invoke("filesize", path);
 }
 
-export function readFileBytes(
-  path: string,
-  callback: (err: any, data: any) => void
-) {
-  fs.readFile(path, callback);
+export function readFileBytes(path: string): Promise<Buffer> {
+  return window.ipc.invoke("load-file", path);
 }

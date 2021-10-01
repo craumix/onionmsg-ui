@@ -9,7 +9,7 @@ import {
 import { Avatar } from "../avatar";
 import { MessageContainer } from "./message-container";
 import styles from "./conversation-window.sass";
-import { FaBackspace, FaFile, FaPaperclip, FaUpload } from "react-icons/fa";
+import { FaBackspace, FaPaperclip, FaUpload } from "react-icons/fa";
 import { BiSticker } from "react-icons/bi";
 import { GrEmoji } from "react-icons/gr";
 import { ConversationSettings } from "../overlay/conversation-settings";
@@ -21,8 +21,6 @@ import {
 } from "../../utils/file";
 import prettyBytes from "pretty-bytes";
 import mime from "mime";
-import { rndColorFromString } from "../../utils/color";
-const dialog = window.require("electron").remote.dialog;
 
 interface ConversationWindowState {
   messageInput: string;
@@ -50,7 +48,9 @@ export class ConversationWindow extends React.Component<
       lastMessageSenderUUID: "",
       emojiSelectorVisible: false,
       fileUploadPreview: null,
-      onUploadConfirm: () => {},
+      onUploadConfirm: () => {
+        return;
+      },
       replyTo: undefined,
     };
 
@@ -206,10 +206,8 @@ export class ConversationWindow extends React.Component<
           />
           <button
             onClick={() => {
-              dialog
-                .showOpenDialog(null, {
-                  properties: ["openFile", "multiSelections"],
-                })
+              window.ipc
+                .invoke("pick-file")
                 .then((result) => this.sendFiles(result.filePaths));
             }}
           >
@@ -302,24 +300,19 @@ export class ConversationWindow extends React.Component<
           </div>
         ),
         onUploadConfirm: () => {
-          postFileToRoom(
-            this.uuid(),
-            file,
-            (res: Response) => {
-              if (res.ok) {
-                this.clearToReply();
+          postFileToRoom(this.uuid(), file, this.state.replyTo).then((res) => {
+            if (res.code == 200) {
+              this.clearToReply();
 
-                this.loadNextMessage();
+              this.loadNextMessage();
 
-                if (onSuccess) {
-                  onSuccess();
-                }
-              } else {
-                console.log("Error sending file!\n" + res.text);
+              if (onSuccess) {
+                onSuccess();
               }
-            },
-            this.state.replyTo
-          );
+            } else {
+              console.log("Error sending file!\n" + res.code);
+            }
+          });
         },
       });
       this.uploadConfirmDialog.current.show();
@@ -327,24 +320,22 @@ export class ConversationWindow extends React.Component<
 
     if (typeof file === "string") {
       const filename = filenameFromPath(file);
-      const filesize = filesizeFromPath(file);
-
-      if (
-        mime.getType(filename).startsWith("image") &&
-        filesize <= uploadPreviewMaxSize
-      ) {
-        //TODO handle error properly
-        readFileBytes(file, (err, data) => {
-          if (err) console.log(err);
-          showDialog(
-            filename,
-            filesize,
-            URL.createObjectURL(new Blob([new Uint8Array(data)]))
-          );
-        });
-      } else {
-        showDialog(filename, filesize);
-      }
+      filesizeFromPath(file).then((filesize) => {
+        if (
+          mime.getType(filename).startsWith("image") &&
+          filesize <= uploadPreviewMaxSize
+        ) {
+          readFileBytes(file).then((buffer) => {
+            showDialog(
+              filename,
+              filesize,
+              URL.createObjectURL(new Blob([new Uint8Array(buffer)]))
+            );
+          });
+        } else {
+          showDialog(filename, filesize);
+        }
+      });
     } else {
       showDialog(
         file.name,

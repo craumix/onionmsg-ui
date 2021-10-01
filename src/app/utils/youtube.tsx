@@ -1,5 +1,5 @@
 const ytIdRegex = new RegExp(
-  /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)(?:[\?\&]t=([0-9]*))?/g
+  /(?:[?&]v=|\/embed\/|\/1\/|\/v\/|https:\/\/(?:www\.)?youtu\.be\/)([^&\n?#]+)(?:[?&]t=([0-9]*))?/g
 );
 
 /*
@@ -41,8 +41,7 @@ export function findYoutubeIDs(text: string): [string, number][] {
   do {
     match = ytIdRegex.exec(text);
 
-    //Prevent some false positives
-    if (match && match[0].includes("you")) {
+    if (match) {
       ids.push([match[1], +match[2] ?? 0]);
     }
   } while (match);

@@ -1,11 +1,6 @@
 import mime from "mime";
 import { IMessageEvent } from "websocket";
 import { filenameFromPath } from "../utils/file";
-const stream = window.require("electron").remote.require("stream");
-const fs = window.require("electron").remote.require("fs");
-const fetch = window
-  .require("electron")
-  .remote.require("electron-fetch").default;
 
 const replyToHeader = "X-ReplyTo";
 const filenameHeader = "X-Filename";
@@ -14,6 +9,12 @@ const mimetypeHeader = "X-Mimetype";
 export interface DaemonNotification {
   type: string;
   data: any;
+}
+
+export interface SlimResponse {
+  code: number;
+  //headers: Headers;
+  //body: Blob;
 }
 
 const apiProto = "http://";
@@ -121,41 +122,28 @@ export function postMessageToRoom(
   );
 }
 
-export function postFileToRoom(
+export async function postFileToRoom(
   uuid: string,
   file: string | File,
-  responseHandler?: (response: Response) => void,
   replyto?: ChatMessage
-): void {
-  if (typeof file === "string") {
-    return sendFile(
-      uuid,
-      fs.createReadStream(file),
-      filenameFromPath(file),
-      responseHandler,
-      replyto
-    );
-  } else {
-    file.arrayBuffer().then((res) => {
-      sendFile(
-        uuid,
-        stream.Readable.from([new Uint8Array(res)]),
-        file.name,
-        responseHandler,
-        replyto
-      );
-    });
-  }
+): Promise<SlimResponse> {
+  return await sendFile(
+    uuid,
+    typeof file === "string"
+      ? file
+      : new Uint8Array(await file.arrayBuffer()),
+    typeof file === "string" ? filenameFromPath(file) : file.name,
+    replyto
+  );
 }
 
-function sendFile(
+async function sendFile(
   uuid: string,
-  filestream: any,
+  file: Uint8Array | string,
   filename: string,
-  responseHandler?: (response: Response) => void,
   replyto?: ChatMessage
-) {
-  let headers: {
+): Promise<SlimResponse> {
+  const headers: {
     [replyToHeader]?: string;
     [filenameHeader]: string;
     [mimetypeHeader]: string;
@@ -163,12 +151,11 @@ function sendFile(
 
   if (replyto) headers[replyToHeader] = JSON.stringify(replyto);
 
-  apiPOST(
-    "/room/send/file",
-    filestream,
-    new Map([["uuid", uuid]]),
-    headers
-  ).then(responseHandler ?? (() => {}));
+  return await window.ipc.invoke("post-bytes-or-filepath", {
+    url: constructAPIUrl("/room/send/file", new Map([["uuid", uuid]])),
+    data: file,
+    headers: headers,
+  });
 }
 
 export function deleteRoom(uuid: string): Promise<Response> {

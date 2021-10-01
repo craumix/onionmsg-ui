@@ -9,6 +9,12 @@ declare module "*.svg" {
   export default content;
 }
 
+declare interface Window {
+  ipc: {
+    invoke: (channel: string, ...args: any) => Promise<any>
+  }
+}
+
 interface MessageMeta {
   sender: string;
   time: string;
@@ -40,6 +46,7 @@ interface ConversationInfo {
   peers: string[];
   name: string;
   nicks: Map<string, string>;
+  admins: Map<string, boolean>;
 }
 
 interface RoomRequest {
