@@ -9,10 +9,15 @@ declare module "*.svg" {
   export default content;
 }
 
+declare module "*.mp3" {
+  const content: string;
+  export default content;
+}
+
 declare interface Window {
   ipc: {
-    invoke: (channel: string, ...args: any) => Promise<any>
-  }
+    invoke: (channel: string, ...args: any) => Promise<any>;
+  };
 }
 
 interface MessageMeta {

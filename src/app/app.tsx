@@ -5,14 +5,13 @@ import {
   Redirect,
   Route,
   Switch,
-  useHistory,
-  withRouter,
 } from "react-router-dom";
 import { ConversationWindow } from "./components/conversation-windows/conversation-window";
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
 import styles from "./app.sass";
 import { NoBackendDialog } from "./components/overlay/no-backend";
 import OnlineSVG from "./assets/undraw/online.svg";
+import NotificationSoundFile from "./assets/sounds/gesture-192.mp3";
 import { AppSidebar } from "./components/app-sidebar";
 
 const NilUUID = "00000000-0000-0000-0000-000000000000";
@@ -21,11 +20,15 @@ const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef();
 const ConversationWindowRef: React.RefObject<ConversationWindow> =
   React.createRef();
 
+const NotificationSound = new Audio(NotificationSoundFile);
+
 function render() {
   listenOnBackendNotifications((notification: DaemonNotification) => {
     console.log(notification);
     if (notification.type === "NewMessage") {
       //Do notifications
+      NotificationSound.play()
+
       if (
         ConversationWindowRef.current?.props.match.params.uuid ===
         notification.data.uuid
