@@ -10,7 +10,7 @@ import { ConversationWindow } from "./components/conversation-windows/conversati
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
 import styles from "./app.sass";
 import { NoBackendDialog } from "./components/overlay/no-backend";
-import OnlineSVG from "./assets/undraw/online.svg";
+import OnlineSVGFile from "./assets/undraw/online.svg";
 import NotificationSoundFile from "./assets/sounds/gesture-192.mp3";
 import { AppSidebar } from "./components/app-sidebar";
 
@@ -27,7 +27,7 @@ function render() {
     console.log(notification);
     if (notification.type === "NewMessage") {
       //Do notifications
-      NotificationSound.play()
+      NotificationSound.play();
 
       if (
         ConversationWindowRef.current?.props.match.params.uuid ===
@@ -80,7 +80,8 @@ function render() {
                       {
                         //TODO Fix SVGs
                       }
-                      <OnlineSVG
+                      <img
+                        src={OnlineSVGFile}
                         style={{
                           transform: "scale(0.5)",
                         }}
