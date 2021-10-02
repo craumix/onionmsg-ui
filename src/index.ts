@@ -56,7 +56,7 @@ const createWindow = (): void => {
 app.on("ready", createWindow);
 
 //TODO Fix later and remove wildcard
-const backend = "localhost:10052";
+const backend = "http://localhost:10052";
 const google =
   "*.youtube.com youtube.com " +
   "*.ytimg.com ytimg.com " +
@@ -76,10 +76,10 @@ app.on("ready", () => {
             backend +
             " " +
             google +
-            " 'unsafe-inline' data: blob: ws: devtools: ;" +
+            " 'unsafe-inline' data: blob: ws: devtools: https: ;" +
             "script-src 'self' " +
             google +
-            " 'unsafe-eval' 'unsafe-inline' data: ;",
+            " 'unsafe-eval' 'unsafe-inline' data: https: ;",
         ],
       },
     });

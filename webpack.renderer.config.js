@@ -16,20 +16,7 @@ rules.push({
 });
 
 rules.push({
-  test: /\.svg$/,
-  use: [
-    "babel-loader",
-    {
-      loader: "react-svg-loader",
-      options: {
-        jsx: true, // true outputs JSX tags
-      },
-    },
-  ],
-});
-
-rules.push({
-  test: /\.mp3$/,
+  test: /\.(mp3|svg)$/,
   loader: "file-loader",
   options: {
     name: "static/media/[name].[hash:8].[ext]",
