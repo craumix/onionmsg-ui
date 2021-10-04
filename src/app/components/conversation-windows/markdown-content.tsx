@@ -18,7 +18,8 @@ export class MarkdownContent extends React.Component<MarkdownContentProps> {
     return (
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
-        children={this.props.text}
+        //Replace regular newlines with MD newlines
+        children={this.props.text.replace(/\n/, "  \n")}
         components={{
           code({ node, inline, className, children, ...props }: CodeProps) {
             const match = /language-(\w+)/.exec(className || "");
