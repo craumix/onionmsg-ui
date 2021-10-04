@@ -42,6 +42,7 @@ const createWindow = (): void => {
     }
   };
   mainWindow.webContents.on("will-navigate", handleRedirect);
+  mainWindow.webContents.on("new-window", handleRedirect)
 
   // and load the index.html of the app.
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
