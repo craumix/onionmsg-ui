@@ -3,7 +3,7 @@ const rules = require("./webpack.rules");
 const plugins = require("./webpack.plugins");
 
 rules.push({
-  test: /\.sass$/,
+  test: /\.s(a|c)ss$/,
   use: [
     "style-loader",
     "@teamsupercell/typings-for-css-modules-loader",

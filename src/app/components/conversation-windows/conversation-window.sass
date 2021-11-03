@@ -1,3 +1,5 @@
+@import ../../themify
+
 .file-drop
     position: fixed
     height: 100%
@@ -6,13 +8,15 @@
     z-index: 1
     pointer-events: none
     > .file-drop-target
+        @include themify()
+            background-color: themed("bg-color")
+
         position: absolute
         top: 0
         left: 0
         height: 100%
         width: 100%
         opacity: 0
-        background-color: #FFF
         display: flex
         align-items: center
         justify-content: center
@@ -23,6 +27,8 @@
             opacity: 0.75
 
 .inputField
+    @include themify()
+        background-color: themed("bg-color")
     border: 0px
     outline: none
     margin: 8px

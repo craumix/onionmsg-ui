@@ -13,6 +13,7 @@ import { NoBackendDialog } from "./components/overlay/no-backend";
 import OnlineSVGFile from "./assets/undraw/online.svg";
 import NotificationSoundFile from "./assets/sounds/gesture-192.mp3";
 import { AppSidebar } from "./components/app-sidebar";
+import { ThemeProvider } from "./themes";
 
 const NilUUID = "00000000-0000-0000-0000-000000000000";
 
@@ -51,7 +52,7 @@ function render() {
   });
 
   ReactDOM.render(
-    <div>
+    <ThemeProvider>
       <NoBackendDialog />
 
       <Router>
@@ -106,7 +107,7 @@ function render() {
           <Redirect to={"/c/" + NilUUID} />
         </Switch>
       </Router>
-    </div>,
+    </ThemeProvider>,
     document.getElementById("app")
   );
 }

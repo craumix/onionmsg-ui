@@ -1,10 +1,20 @@
 import React from "react";
 import { ConversationList } from "./conversation-list";
 import styles from "./app-sidebar.sass";
-import { FaBackspace, FaCog, FaPlus, FaSearch, FaServer } from "react-icons/fa";
+import {
+  FaBackspace,
+  FaCloudSun,
+  FaCog,
+  FaMoon,
+  FaPlus,
+  FaSearch,
+  FaServer,
+  FaSun,
+} from "react-icons/fa";
 import { ContactMenu } from "./overlay/contact-menu";
 import { BackendInfo } from "./overlay/backend-info";
 import { RequestList } from "./request-list";
+import { ThemeContext } from "../themes";
 
 interface AppSidebarProps {
   className?: string;
@@ -53,6 +63,26 @@ export class AppSidebar extends React.Component<
           >
             <FaCog size="18" />
           </button>
+
+          <ThemeContext.Consumer>
+            {({ theme, cycleTheme }) => {
+              return (
+                <button className={styles.sidebarButton} onClick={cycleTheme}>
+                  {(() => {
+                    switch (theme) {
+                      case "light":
+                        return <FaSun size="18" />;
+                      case "dawn":
+                        return <FaCloudSun size="18" />;
+                      case "dark":
+                        return <FaMoon size="18" />;
+                    }
+                  })()}
+                </button>
+              );
+            }}
+          </ThemeContext.Consumer>
+
           <button
             className={styles.sidebarButton}
             onClick={() => {

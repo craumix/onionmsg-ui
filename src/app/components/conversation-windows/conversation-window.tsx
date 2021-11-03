@@ -9,7 +9,7 @@ import {
 import { Avatar } from "../avatar";
 import { MessageContainer } from "./message-container";
 import styles from "./conversation-window.sass";
-import { FaBackspace, FaPaperclip, FaUpload } from "react-icons/fa";
+import { FaBackspace, FaPaperclip, FaPhone, FaUpload } from "react-icons/fa";
 import { BiSticker } from "react-icons/bi";
 import { GrEmoji } from "react-icons/gr";
 import { ConversationSettings } from "../overlay/conversation-settings";
@@ -93,6 +93,7 @@ export class ConversationWindow extends React.Component<
           <h1
             style={{
               whiteSpace: "nowrap",
+              flexGrow: 1,
             }}
             onClick={() => {
               this.convSettingsRef.current.show();
