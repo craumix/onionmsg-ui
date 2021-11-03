@@ -1,8 +1,30 @@
+@import ../../themify
+
+.markdown
+    @include themify()
+        color: themed("base06")
+    > *
+        margin: 0px
+
 .codeContainer
-    background-color: #F4F4F4
-    overflow-x: auto
-    max-height: 25vh
-    font-size: 12px
+    //Diffrent code styles have widely diffrent styles, so try to keep them similar
+    overflow: auto !important
+    max-height: 25vh !important
+    font-size: 14px !important
+    padding: 1em !important
+    height: fit-content !important
+    margin: 0px !important
+    box-sizing: content-box !important
+    position: static !important
+    border-radius: 0px !important
+    transition: background-color 1s ease
+    > code
+        font-family: "Fira Code", Consolas, Monaco, "Andale Mono", "Ubuntu Mono", monospace !important
+        padding: 0px !important
+        max-height: inherit !important
+        height: auto !important
+        overflow: visible !important
+        display: inline !important
 
 .codeCopyButton
     position: absolute

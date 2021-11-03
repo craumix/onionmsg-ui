@@ -2,10 +2,15 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { coy } from "react-syntax-highlighter/dist/esm/styles/prism";
+import {
+  coy,
+  solarizedlight,
+  nord,
+} from "react-syntax-highlighter/dist/esm/styles/prism";
 import type { CodeComponent } from "react-markdown/src/ast-to-react";
 import styles from "./markdown-content.sass";
 import { FaCopy } from "react-icons/fa";
+import { ThemeContext } from "../../themes";
 
 type CodeProps = Parameters<CodeComponent>[0];
 
@@ -18,6 +23,7 @@ export class MarkdownContent extends React.Component<MarkdownContentProps> {
     return (
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
+        className={styles.markdown}
         //Replace regular newlines with MD newlines
         children={this.props.text.replace(/\n/, "  \n")}
         components={{
@@ -29,19 +35,23 @@ export class MarkdownContent extends React.Component<MarkdownContentProps> {
                   position: "relative",
                 }}
               >
-                <SyntaxHighlighter
-                  className={styles.codeContainer}
-                  style={coy}
-                  language={match[1]}
-                  showLineNumbers={true}
-                  PreTag="div"
-                  //Always display at least 1 line even if empty
-                  children={
-                    String(children).replace(/\n$/, "").length > 0
-                      ? String(children).replace(/\n$/, "")
-                      : " "
-                  }
-                />
+                <ThemeContext.Consumer>
+                  {({ theme }) => (
+                    <SyntaxHighlighter
+                      className={styles.codeContainer}
+                      style={codeThemeFromTheme(theme)}
+                      language={match[1]}
+                      showLineNumbers={true}
+                      PreTag="div"
+                      //Always display at least 1 line even if empty
+                      children={
+                        String(children).replace(/\n$/, "").length > 0
+                          ? String(children).replace(/\n$/, "")
+                          : " "
+                      }
+                    />
+                  )}
+                </ThemeContext.Consumer>
                 <button
                   title="Copy"
                   className={styles.codeCopyButton}
@@ -60,4 +70,16 @@ export class MarkdownContent extends React.Component<MarkdownContentProps> {
       />
     );
   }
+}
+
+function codeThemeFromTheme(theme: string): any {
+  switch (theme) {
+    case "light":
+      return coy;
+    case "dawn":
+      return solarizedlight;
+    case "dark":
+      return nord;
+  }
+  return undefined;
 }

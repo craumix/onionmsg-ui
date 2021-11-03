@@ -65,22 +65,20 @@ export class AppSidebar extends React.Component<
           </button>
 
           <ThemeContext.Consumer>
-            {({ theme, cycleTheme }) => {
-              return (
-                <button className={styles.sidebarButton} onClick={cycleTheme}>
-                  {(() => {
-                    switch (theme) {
-                      case "light":
-                        return <FaSun size="18" />;
-                      case "dawn":
-                        return <FaCloudSun size="18" />;
-                      case "dark":
-                        return <FaMoon size="18" />;
-                    }
-                  })()}
-                </button>
-              );
-            }}
+            {({ theme, cycleTheme }) => (
+              <button className={styles.sidebarButton} onClick={cycleTheme}>
+                {(() => {
+                  switch (theme) {
+                    case "light":
+                      return <FaSun size="18" />;
+                    case "dawn":
+                      return <FaCloudSun size="18" />;
+                    case "dark":
+                      return <FaMoon size="18" />;
+                  }
+                })()}
+              </button>
+            )}
           </ThemeContext.Consumer>
 
           <button
