@@ -1,11 +1,18 @@
+@import ../themify
+
+.entryContainer
+    @include themify()
+        background-color: themed("base01")
+
 .dialogMenuEntry
-    background-color: #FFF
+    background-color: transparent
     width: 100%
     height: 100%
     border-radius: 4px
     cursor: pointer
     &:hover
-        background-color: #EEE
+        @include themify()
+            background-color: themed("base02")
     p
         margin: 6px
         margin-left: 24px

@@ -8,9 +8,6 @@
     z-index: 1
     pointer-events: none
     > .file-drop-target
-        @include themify()
-            background-color: themed("bg-color")
-
         position: absolute
         top: 0
         left: 0
@@ -28,7 +25,7 @@
 
 .inputField
     @include themify()
-        background-color: themed("bg-color")
+        background-color: themed("base00")
     border: 0px
     outline: none
     margin: 8px
@@ -37,7 +34,8 @@
     flex-grow: 1
 
 .conversationContainer
-    background: white
+    @include themify()
+        background-color: themed("base00")
     margin: 0px
     padding: 0px
     display: flex
@@ -67,5 +65,5 @@
     flex-shrink: 0
     button
         border: 0px
-        background: white
+        background: transparent
         color: #888

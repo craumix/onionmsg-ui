@@ -1,3 +1,5 @@
+@import ../themify
+
 .buttonContainer
     display: flex
     width: 100%
@@ -5,18 +7,22 @@
     padding: 4px 4px 0px 4px
 
 .sidebarButton
+    @include themify()
+        color: themed("base06")
     border-style: solid
     border-width: 2px
-    border-color: #EEE
     border-radius: 12px
+    background-color: transparent
+    border-color: transparent
     &:hover
-        background-color: #CCC
-        border-color: #CCC
+        @include themify()
+            background-color: themed("base02")
 
 .sidebarContainer
+    @include themify()
+        background-color: themed("base01")
     margin: 0px
     padding: 0px
-    background-color: #EEE
     display: flex
     justify-content: flex-start
     align-items: flex-start
@@ -24,6 +30,8 @@
     flex-shrink: 0
 
 .searchInputContainer
+    @include themify()
+        background-color: themed("base-1")
     width: calc( 100% - 8px )
     box-sizing: border-box
     display: flex
@@ -31,15 +39,19 @@
     padding: 4px 8px
     margin: 4px 4px
     border-radius: 8px
-    background-color: #FFF
     button
+        @include themify()
+            color: themed("base06")
         padding: 0px
-        background-color: #FFF
+        background-color: transparent
 
 .searchInput
+    @include themify()
+        color: themed("base06")
     border: none
     font-size: 14px
     padding: 4px
     box-sizing: border-box
     flex-grow: 1
     width: 100px
+    background: transparent

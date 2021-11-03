@@ -259,10 +259,7 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
         <a
           href={this.blobUrl}
           download={this.props.msgContent.blob.name}
-          style={{
-            textDecoration: "none",
-            color: "blueviolet",
-          }}
+          className={styles.blobLink}
         >
           Download{" "}
           {this.props.msgContent.blob.name +

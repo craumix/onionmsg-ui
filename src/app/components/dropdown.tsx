@@ -47,7 +47,7 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
       <div
         onClick={(event) => {
           event.nativeEvent.preventDefault();
-          this.hide()
+          this.hide();
         }}
       >
         <div
@@ -66,12 +66,12 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
             position: "absolute",
             top: this.props.top ?? "0px",
             right: this.props.right ?? "0px",
-            backgroundColor: "white",
             borderRadius: "4px",
             filter: "drop-shadow(0 0 0.25rem lightgrey)",
             zIndex: 101,
             width: "fit-content",
           }}
+          className={styles.entryContainer}
         >
           {this.props.entries.map((entry: DropdownEntry, index: number) => (
             <div

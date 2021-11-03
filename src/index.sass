@@ -1,3 +1,5 @@
+@import app/themify
+  
 $tor-purple: #7D4698
 
 body
@@ -14,7 +16,8 @@ button
 blockquote
   //TODO maybe fix the use of !important
   border-radius: 0px !important
-  border-left: #EEE solid 4px
+  @include themify()
+    border-left: themed("base02") solid 4px
   padding-left: 8px
 
 //TODO this ***** accessibility

@@ -1,3 +1,5 @@
+@import ../../themify
+
 .messageContainer
     position: relative
     width: auto
@@ -7,30 +9,34 @@
     min-height: 1em
     &:hover
         > .messageTimestamp
-            color: #888
+            @include themify(false)
+                color: themed("base03") !important
 
 .topLevelMessageContainer
     margin-left: 8px
     margin-right: 64px
-    border-left: solid 4px white
+    @include themify(false)
+        border-left: solid 4px transparent
     padding: 4px 4px 4px 0px
     &:hover, &.dropdownVisible
-        background-color: #FAFAFA
-        border-left: solid 4px blueviolet
+        @include themify(false)
+            background-color: themed("base01")
+            border-left: solid 4px themed("base0E")
         .messageOptionsMenu
             visibility: visible
 
 .messageTimestamp
+    color: transparent
     float: left
     margin: 0px
     margin-left: 8px
     margin-top: 4px
     font-size: 10px
     user-select: none
-    color: #FFF
 
 .showTimestamp
-    color: #888 !important
+    @include themify(false)
+        color: themed("base03") !important
 
 .contentContainer
     font-size: 14px
@@ -53,7 +59,8 @@
     justify-content: center
     padding: 6px
     float: left
-    background-color: #FFF
+    @include themify()
+        background-color: themed("base00")
     margin-right: 8px
 
 .messageOptionsMenu
@@ -63,16 +70,24 @@
     top: -1.75em
     filter: drop-shadow(0 0 0.15rem lightgrey)
     border-radius: 4px
-    border: 2px solid #FFF
+    @include themify()
+        background-color: themed("base01")
+        border: 2px solid themed("base01")
     box-sizing: border-box
-    background-color: #FFF
     z-index: 1
     > *
-        background-color: #FFF
+        @include themify()
+            background-color: themed("base01")
     button
         padding: 0px
         width: 1.75em
         height: 1.75em
         border-radius: 4px
         &:hover
-            background-color: #EEE
+            @include themify()
+                background-color: themed("base02")
+
+.blobLink
+    text-decoration: none
+    @include themify()
+        color: themed("base0E")

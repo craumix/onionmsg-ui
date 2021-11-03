@@ -1,3 +1,5 @@
+@import ../../themify
+    
 .dimingOverlay
     position: fixed
     top: 0px
@@ -16,7 +18,9 @@
     min-height: 50px
     width: fit-content
     height: fit-content
-    background-color: #FFF
+    @include themify
+        background-color: themed("base00")
+        color: themed("base05")
     border-radius: 8px
     filter: drop-shadow(0 0 0.25rem grey)
     padding: 4px
