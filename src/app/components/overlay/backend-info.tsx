@@ -2,7 +2,7 @@ import React from "react";
 import { fetchTorinfo } from "../../api/api";
 import { AppOverlayMenu } from "./app-overlay";
 import styles from "./backend-info.sass";
-import { SiTor } from "react-icons/si";
+import { SiTorproject } from "react-icons/si";
 
 interface TorInfo {
   log: string;
@@ -38,7 +38,7 @@ export class BackendInfo extends React.Component<unknown, BackendInfoProps> {
       <AppOverlayMenu ref={this.overlayRef}>
         <h1>Backend Info</h1>
         <h2 style={{ marginBottom: "0px" }}>
-          <SiTor /> Tor Version {this.state.tor.version}
+          <SiTorproject /> Tor Version {this.state.tor.version}
         </h2>
         <p
           style={{
