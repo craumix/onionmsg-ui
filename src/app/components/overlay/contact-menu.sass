@@ -1,3 +1,5 @@
+@import ../../themify
+
 .tagContainer
     width: 32em
 
@@ -6,6 +8,7 @@
     border: none
     font-family: monospace
     margin-top: 8px
+    background: transparent
     &:focus
         outline: none
 
@@ -66,10 +69,16 @@
     border-radius: 4px
 
 .addContactIDButton
+    @include themify()
+        color: themed("base06")
     margin-bottom: 4px
     border-radius: 4px
+    background: transparent
 
 .syncContactIDButton
+    @include themify()
+        color: themed("base06")
     margin-bottom: 4px
     border-radius: 4px
     float: right
+    background: transparent

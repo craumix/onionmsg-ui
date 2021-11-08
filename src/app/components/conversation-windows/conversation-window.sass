@@ -67,3 +67,16 @@
         border: 0px
         background: transparent
         color: #888
+
+.replyContainer
+    //TODO fix height to use scroll
+    max-height: 33%
+    //overflowY: "scroll"
+    @include themify()
+        background-color: themed("base00")
+        box-shadow: 10px -10px 5px -3px themed("base01")
+    width: 100%
+    border-radius: 0px
+    display: flex
+    flex-direction: column
+    z-index: 1

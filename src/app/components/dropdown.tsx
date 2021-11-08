@@ -63,13 +63,8 @@ export class Dropdown extends React.Component<DropdownProps, DropdownState> {
 
         <div
           style={{
-            position: "absolute",
             top: this.props.top ?? "0px",
             right: this.props.right ?? "0px",
-            borderRadius: "4px",
-            filter: "drop-shadow(0 0 0.25rem lightgrey)",
-            zIndex: 101,
-            width: "fit-content",
           }}
           className={styles.entryContainer}
         >

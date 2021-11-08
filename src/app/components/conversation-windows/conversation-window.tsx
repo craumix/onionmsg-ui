@@ -114,18 +114,7 @@ export class ConversationWindow extends React.Component<
         </div>
         {this.state.replyTo ? (
           <div
-            style={{
-              //TODO fix height to use scroll
-              maxHeight: "33%",
-              //overflowY: "scroll",
-              backgroundColor: "#FFF",
-              width: "100%",
-              boxShadow: "10px -10px 5px -3px #CCC",
-              borderRadius: "0px",
-              display: "flex",
-              flexDirection: "column",
-              zIndex: 1,
-            }}
+            className={styles.replyContainer}
           >
             <div
               style={{
@@ -138,7 +127,7 @@ export class ConversationWindow extends React.Component<
             >
               <p style={{ margin: "4px 0px" }}>Replying</p>
               <button
-                style={{ backgroundColor: "#FFF" }}
+                style={{ backgroundColor: "transparent" }}
                 onClick={() => this.clearToReply()}
               >
                 <FaBackspace
