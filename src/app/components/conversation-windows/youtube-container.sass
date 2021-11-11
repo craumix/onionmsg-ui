@@ -1,8 +1,13 @@
+@import ../../themify
+    
 .youtubeContainer
-    background-color: #EEE
+    @include themify()
+        background-color: themed("base01")
     padding: 16px
     margin-bottom: 8px
+    margin-top: 4px
     width: fit-content
+    border-left: solid 4px #C4302B
     p
         margin-top: 0px
         margin-bottom: 8px
