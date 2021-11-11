@@ -49,8 +49,8 @@ interface ConversationInfo {
   self: string;
   peers: string[];
   name: string;
-  nicks: Map<string, string>;
-  admins: Map<string, boolean>;
+  nicks: { [key: string]: string };
+  admins: { [key: string]: boolean };
 }
 
 interface RoomRequest {

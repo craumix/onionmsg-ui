@@ -129,9 +129,7 @@ export async function postFileToRoom(
 ): Promise<SlimResponse> {
   return await sendFile(
     uuid,
-    typeof file === "string"
-      ? file
-      : new Uint8Array(await file.arrayBuffer()),
+    typeof file === "string" ? file : new Uint8Array(await file.arrayBuffer()),
     typeof file === "string" ? filenameFromPath(file) : file.name,
     replyto
   );
@@ -176,4 +174,11 @@ export function acceptRequest(uuid: string): Promise<Response> {
 
 export function deleteRequest(uuid: string): Promise<Response> {
   return apiGET("/request/delete", new Map([["uuid", uuid]]));
+}
+
+export function setNicknameCommand(
+  uuid: string,
+  nick: string
+): Promise<Response> {
+  return apiPOST("/room/command/setnick", nick, new Map([["uuid", uuid]]));
 }
