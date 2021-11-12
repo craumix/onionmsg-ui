@@ -25,8 +25,7 @@ import { RoomsContext } from "../../rooms";
 
 interface RoomWindowState {
   messageInput: string;
-  messageContainers: JSX.Element[];
-  lastMessageSenderUUID: string;
+  messages: ChatMessage[];
   emojiSelectorVisible: boolean;
   fileUploadPreview: JSX.Element;
   onUploadConfirm: () => void;
@@ -42,8 +41,7 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
     super(props);
     this.state = {
       messageInput: "",
-      messageContainers: [],
-      lastMessageSenderUUID: "",
+      messages: [],
       emojiSelectorVisible: false,
       fileUploadPreview: null,
       onUploadConfirm: () => {
@@ -107,7 +105,7 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
             flexGrow: 1,
           }}
         >
-          <div>{this.state.messageContainers}</div>
+          {this.renderMessages()}
           <div ref={this.messagesEndRef} />
         </div>
         {this.state.replyTo ? (
@@ -176,8 +174,6 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
                     });
 
                     this.clearToReply();
-
-                    this.loadNextMessage();
                   } else {
                     console.log("Error sending message!\n" + res.text);
                   }
@@ -291,8 +287,6 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
             if (res.code == 200) {
               this.clearToReply();
 
-              this.loadNextMessage();
-
               if (onSuccess) {
                 onSuccess();
               }
@@ -338,42 +332,25 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
     );
   }
 
-  loadNextMessage(count = 1): void {
-    this.loadNewMessages(true, count).then(() =>
-      this.scrollMessageContainerDown()
-    );
+  appendMessages(msgs: ChatMessage[]): void {
+    const newMsgs = this.state.messages;
+    newMsgs.push(...msgs);
+    this.setState({
+      messages: newMsgs,
+    });
+    this.scrollMessageContainerDown();
   }
 
   loadNewMessages(append: boolean, count?: number): Promise<void> {
     return fetchRoomMessages(this.uuid(), count)
       .then((res) => res.json())
       .then((result) => {
-        const foo: JSX.Element[] = append ? this.state.messageContainers : [];
-        let lastSender = append ? this.state.lastMessageSenderUUID : "";
-
-        if (result != null) {
-          result.forEach((element: ChatMessage, index: number) => {
-            const showHeader = lastSender != element.meta.sender;
-            if (showHeader) {
-              lastSender = element.meta.sender;
-            }
-
-            foo.push(
-              <MessageContainer
-                message={element}
-                key={element.sig}
-                roomid={this.uuid()}
-                authorHeader={showHeader}
-                parentContainer={this}
-              />
-            );
+        if (!append) {
+          this.setState({
+            messages: [],
           });
         }
-
-        this.setState({
-          messageContainers: foo,
-          lastMessageSenderUUID: lastSender,
-        });
+        this.appendMessages(result);
       });
   }
 
@@ -393,5 +370,25 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
     this.setState({
       replyTo: undefined,
     });
+  }
+  renderMessages(): JSX.Element {
+    let lastSender: string;
+    return (
+      <div>
+        {this.state.messages?.map((msg: ChatMessage) => {
+          const showHeader = lastSender ? lastSender != msg.meta.sender : true;
+          lastSender = msg.meta.sender;
+          return (
+            <MessageContainer
+              message={msg}
+              key={msg.sig}
+              roomid={this.uuid()}
+              authorHeader={showHeader}
+              parentContainer={this}
+            />
+          );
+        })}
+      </div>
+    );
   }
 }

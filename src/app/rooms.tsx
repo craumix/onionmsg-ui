@@ -71,6 +71,10 @@ export class RoomsProvider extends React.Component<any, RoomsProviderState> {
       });
   }
 
+  findById(uuid: string): RoomInfo {
+    return this.state.rooms?.find((r) => r.uuid === uuid);
+  }
+
   render(): JSX.Element {
     return (
       <RoomsContext.Provider
@@ -83,7 +87,7 @@ export class RoomsProvider extends React.Component<any, RoomsProviderState> {
             this.appendRoom(room);
           },
           findById: (id: string) => {
-            return this.state.rooms?.find((r) => r.uuid === id);
+            return this.findById(id);
           },
           updateRoom: (room: RoomInfo) => {
             this.updateRoom(room);

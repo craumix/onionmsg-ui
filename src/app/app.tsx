@@ -28,10 +28,17 @@ function render() {
   listenOnBackendNotifications((notification: DaemonNotification) => {
     console.log(notification);
     if (notification.type === "NewMessage") {
-      //Do notifications
-      NotificationSound.play();
-
       const foo: { uuid: string; messages: ChatMessage[] } = notification.data;
+
+      for (const msg of foo.messages) {
+        if (
+          msg.meta.sender != RoomProviderRef.current.findById(foo.uuid).self
+        ) {
+          //Do notifications
+          NotificationSound.play();
+          break;
+        }
+      }
 
       for (const msg of foo.messages) {
         if (msg.content.type == "mtype.cmd") {
@@ -41,7 +48,7 @@ function render() {
       }
 
       if (RoomWindowRef.current?.props.match.params.uuid === foo.uuid) {
-        RoomWindowRef.current.loadNextMessage(foo.messages.length);
+        RoomWindowRef.current.appendMessages(foo.messages);
       }
     } else if (notification.type === "NewRoom") {
       RoomProviderRef.current.appendRoom(notification.data);

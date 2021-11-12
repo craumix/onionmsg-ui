@@ -34,12 +34,7 @@ export class RoomSettings extends React.Component<RoomSettingsProps> {
                 <button
                   onClick={() => {
                     const nick = this.nickInputRef.current.value;
-                    setNicknameCommand(info.uuid, nick).then((resp) => {
-                      if (resp.ok) {
-                        info.nicks[info.self] = nick;
-                        updateRoom(info);
-                      }
-                    });
+                    setNicknameCommand(info.uuid, nick);
                   }}
                 >
                   Change
