@@ -21,6 +21,7 @@ import {
 } from "../../utils/file";
 import prettyBytes from "pretty-bytes";
 import mime from "mime";
+import { RoomsContext } from "../../rooms";
 
 interface RoomWindowState {
   messageInput: string;
@@ -94,7 +95,9 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
               this.convSettingsRef.current.show();
             }}
           >
-            {this.uuid()}
+            <RoomsContext.Consumer>
+              {({ findById }) => findById(this.uuid())?.name || this.uuid()}
+            </RoomsContext.Consumer>
           </h1>
         </div>
         <div
@@ -135,6 +138,7 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
               <MessageContainer
                 authorHeader={true}
                 message={this.state.replyTo}
+                roomid={this.uuid()}
                 autoHideTimestamp={false}
               />
             </div>
@@ -358,6 +362,7 @@ export class RoomWindow extends React.Component<any, RoomWindowState> {
               <MessageContainer
                 message={element}
                 key={element.sig}
+                roomid={this.uuid()}
                 authorHeader={showHeader}
                 parentContainer={this}
               />

@@ -14,13 +14,17 @@ import OnlineSVGFile from "./assets/undraw/online.svg";
 import NotificationSoundFile from "./assets/sounds/gesture-192.mp3";
 import { AppSidebar } from "./components/app-sidebar";
 import { ThemeProvider } from "./themes";
+import { RoomsContext, RoomsProvider } from "./rooms";
 
 const NilUUID = "00000000-0000-0000-0000-000000000000";
 
 const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef();
 const RoomWindowRef: React.RefObject<RoomWindow> = React.createRef();
+const RoomProviderRef: React.RefObject<RoomsProvider> = React.createRef();
 
 const NotificationSound = new Audio(NotificationSoundFile);
+
+function processBackendNotifications(appendRoom: (arg0: RoomInfo) => {}) {}
 
 function render() {
   listenOnBackendNotifications((notification: DaemonNotification) => {
@@ -38,7 +42,7 @@ function render() {
         );
       }
     } else if (notification.type === "NewRoom") {
-      AppSidebarRef.current.roomListRef.current.pushRooms(notification.data);
+      RoomProviderRef.current.appendRoom(notification.data)
       //TODO make this less hacky and not depend on the Sidebar for the history
       AppSidebarRef.current.props.history.push("/c/" + notification.data.uuid);
     } else if (notification.type === "NewRequest") {
@@ -50,60 +54,62 @@ function render() {
 
   ReactDOM.render(
     <ThemeProvider>
-      <NoBackendDialog />
+      <RoomsProvider ref={RoomProviderRef}>
+        <NoBackendDialog />
 
-      <Router>
-        <Switch>
-          <Route
-            path="/c/:uuid"
-            render={(props) => (
-              <div className={styles.appContainer}>
-                <AppSidebar
-                  className={styles.sidebar}
-                  ref={AppSidebarRef}
-                  {...props}
-                />
-                <Switch>
-                  <Route exact path={"/c/" + NilUUID}>
-                    <div
-                      className={styles.main}
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        flexDirection: "column",
-                        overflow: "hidden",
-                      }}
-                    >
-                      {
-                        //TODO Fix SVGs
-                      }
-                      <img
-                        src={OnlineSVGFile}
-                        style={{
-                          transform: "scale(0.5)",
-                        }}
-                      />
-                    </div>
-                  </Route>
-                  <Route
-                    path="/c/:uuid"
-                    render={(props) => (
-                      <RoomWindow
-                        className={styles.main}
-                        ref={RoomWindowRef}
-                        {...props}
-                      />
-                    )}
+        <Router>
+          <Switch>
+            <Route
+              path="/c/:uuid"
+              render={(props) => (
+                <div className={styles.appContainer}>
+                  <AppSidebar
+                    className={styles.sidebar}
+                    ref={AppSidebarRef}
+                    {...props}
                   />
-                </Switch>
-              </div>
-            )}
-          ></Route>
+                  <Switch>
+                    <Route exact path={"/c/" + NilUUID}>
+                      <div
+                        className={styles.main}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          flexDirection: "column",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {
+                          //TODO Fix SVGs
+                        }
+                        <img
+                          src={OnlineSVGFile}
+                          style={{
+                            transform: "scale(0.5)",
+                          }}
+                        />
+                      </div>
+                    </Route>
+                    <Route
+                      path="/c/:uuid"
+                      render={(props) => (
+                        <RoomWindow
+                          className={styles.main}
+                          ref={RoomWindowRef}
+                          {...props}
+                        />
+                      )}
+                    />
+                  </Switch>
+                </div>
+              )}
+            ></Route>
 
-          <Redirect to={"/c/" + NilUUID} />
-        </Switch>
-      </Router>
+            <Redirect to={"/c/" + NilUUID} />
+          </Switch>
+        </Router>
+      </RoomsProvider>
     </ThemeProvider>,
     document.getElementById("app")
   );

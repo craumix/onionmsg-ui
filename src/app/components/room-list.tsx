@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { deleteRoom, fetchRoomList } from "../api/api";
+import { deleteRoom } from "../api/api";
 import styles from "./room-list.sass";
 import { BsThreeDots } from "react-icons/bs";
 import { FaCog, FaDoorOpen } from "react-icons/fa";
@@ -8,6 +8,7 @@ import { Dropdown } from "./dropdown";
 import { Avatar } from "./avatar";
 import { RoomSettings } from "./overlay/room-settings";
 import { ConfirmDialog } from "./overlay/confirm-dialog";
+import { RoomsContext } from "../rooms";
 
 interface RoomListProps {
   match?: any;
@@ -15,7 +16,6 @@ interface RoomListProps {
 
 interface RoomListState {
   elementFilter: string;
-  elements: RoomInfo[];
 }
 
 export class RoomList extends React.Component<RoomListProps, RoomListState> {
@@ -23,19 +23,7 @@ export class RoomList extends React.Component<RoomListProps, RoomListState> {
     super(props);
     this.state = {
       elementFilter: "",
-      elements: [],
     };
-  }
-
-  componentDidMount(): void {
-    fetchRoomList()
-      .then((res) => res.json())
-      .then((result) => {
-        if (result != null)
-          this.setState({
-            elements: result,
-          });
-      });
   }
 
   render(): JSX.Element {
@@ -49,17 +37,21 @@ export class RoomList extends React.Component<RoomListProps, RoomListState> {
           margin: "4px 0px",
         }}
       >
-        {this.state.elements.map((element) => {
-          if (this.matchesFilter(element)) {
-            return (
-              <RoomListElement
-                info={element}
-                key={element.uuid}
-                selected={this.props.match.params.uuid == element.uuid}
-              />
-            );
+        <RoomsContext.Consumer>
+          {({ rooms }) =>
+            rooms?.map((element: RoomInfo) => {
+              if (this.matchesFilter(element)) {
+                return (
+                  <RoomListElement
+                    info={element}
+                    key={element.uuid}
+                    selected={this.props.match.params.uuid == element.uuid}
+                  />
+                );
+              }
+            })
           }
-        })}
+        </RoomsContext.Consumer>
       </ul>
     );
   }
@@ -67,17 +59,6 @@ export class RoomList extends React.Component<RoomListProps, RoomListState> {
   setFilter(filter: string): void {
     this.setState({
       elementFilter: filter.toLocaleLowerCase(),
-    });
-  }
-
-  pushRooms(...infos: RoomInfo[]): void {
-    const newElements = this.state.elements;
-    infos.forEach((e) => {
-      newElements.push(e);
-    });
-
-    this.setState({
-      elements: newElements,
     });
   }
 

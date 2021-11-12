@@ -13,9 +13,11 @@ import { RoomWindow } from "./room-window";
 import { MessageSource } from "../overlay/message-source";
 import { rndColorFromString } from "../../utils/color";
 import { Avatar } from "../avatar";
+import { RoomsContext } from "../../rooms";
 
 interface MessageContainerProps {
   message: ChatMessage;
+  roomid: string;
   authorHeader?: boolean;
   parentContainer?: RoomWindow;
   autoHideTimestamp?: boolean;
@@ -86,7 +88,10 @@ export class MessageContainer extends React.Component<
     return (
       <div>
         {this.props.authorHeader ? (
-          <AuthorDivider author={this.props.message.meta.sender} />
+          <AuthorDivider
+            author={this.props.message.meta.sender}
+            roomid={this.props.roomid}
+          />
         ) : null}
 
         <div
@@ -107,6 +112,7 @@ export class MessageContainer extends React.Component<
             <blockquote style={{ marginLeft: "64px", padding: "0px" }}>
               <MessageContainer
                 message={this.props.message.content.replyto}
+                roomid={this.props.roomid}
                 authorHeader={true}
                 autoHideTimestamp={this.props.autoHideTimestamp}
               />
@@ -358,7 +364,12 @@ class AuthorDivider extends React.Component<any> {
             fontWeight: "bold",
           }}
         >
-          {this.props.author}
+          <RoomsContext.Consumer>
+            {({ findById }) =>
+              findById(this.props.roomid)?.nicks[this.props.author] ||
+              this.props.author
+            }
+          </RoomsContext.Consumer>
         </p>
       </div>
     );
