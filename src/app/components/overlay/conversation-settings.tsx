@@ -79,7 +79,6 @@ export class ConversationSettings extends React.Component<
     fetchRoomInfo(this.props.uuid)
       .then((res) => res.json())
       .then((result) => {
-        console.log(result);
         this.setState({
           info: result,
         });
