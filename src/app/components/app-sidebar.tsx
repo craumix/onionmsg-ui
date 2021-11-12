@@ -1,5 +1,5 @@
 import React from "react";
-import { ConversationList } from "./conversation-list";
+import { RoomList } from "./room-list";
 import styles from "./app-sidebar.sass";
 import {
   FaBackspace,
@@ -30,7 +30,7 @@ export class AppSidebar extends React.Component<
   AppSidebarProps,
   AppSidebarState
 > {
-  conversationListRef: React.RefObject<ConversationList>;
+  roomListRef: React.RefObject<RoomList>;
   requestListRef: React.RefObject<RequestList>;
   contactMenuRef: React.RefObject<ContactMenu>;
   backendInfoRef: React.RefObject<BackendInfo>;
@@ -42,7 +42,7 @@ export class AppSidebar extends React.Component<
       filter: "",
     };
 
-    this.conversationListRef = React.createRef();
+    this.roomListRef = React.createRef();
     this.requestListRef = React.createRef();
     this.contactMenuRef = React.createRef();
     this.backendInfoRef = React.createRef();
@@ -126,10 +126,7 @@ export class AppSidebar extends React.Component<
           ) : null}
         </div>
         <RequestList ref={this.requestListRef} />
-        <ConversationList
-          ref={this.conversationListRef}
-          match={this.props.match}
-        />
+        <RoomList ref={this.roomListRef} match={this.props.match} />
       </div>
     );
   }
@@ -138,6 +135,6 @@ export class AppSidebar extends React.Component<
     this.setState({
       filter: filter,
     });
-    this.conversationListRef.current.setFilter(filter);
+    this.roomListRef.current.setFilter(filter);
   }
 }

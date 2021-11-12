@@ -6,7 +6,7 @@ import {
   Route,
   Switch,
 } from "react-router-dom";
-import { ConversationWindow } from "./components/conversation-windows/conversation-window";
+import { RoomWindow } from "./components/room-windows/room-window";
 import { DaemonNotification, listenOnBackendNotifications } from "./api/api";
 import styles from "./app.sass";
 import { NoBackendDialog } from "./components/overlay/no-backend";
@@ -18,8 +18,7 @@ import { ThemeProvider } from "./themes";
 const NilUUID = "00000000-0000-0000-0000-000000000000";
 
 const AppSidebarRef: React.RefObject<AppSidebar> = React.createRef();
-const ConversationWindowRef: React.RefObject<ConversationWindow> =
-  React.createRef();
+const RoomWindowRef: React.RefObject<RoomWindow> = React.createRef();
 
 const NotificationSound = new Audio(NotificationSoundFile);
 
@@ -31,17 +30,15 @@ function render() {
       NotificationSound.play();
 
       if (
-        ConversationWindowRef.current?.props.match.params.uuid ===
+        RoomWindowRef.current?.props.match.params.uuid ===
         notification.data.uuid
       ) {
-        ConversationWindowRef.current.loadNextMessage(
+        RoomWindowRef.current.loadNextMessage(
           notification.data.messages.length
         );
       }
     } else if (notification.type === "NewRoom") {
-      AppSidebarRef.current.conversationListRef.current.pushConversations(
-        notification.data
-      );
+      AppSidebarRef.current.roomListRef.current.pushRooms(notification.data);
       //TODO make this less hacky and not depend on the Sidebar for the history
       AppSidebarRef.current.props.history.push("/c/" + notification.data.uuid);
     } else if (notification.type === "NewRequest") {
@@ -92,9 +89,9 @@ function render() {
                   <Route
                     path="/c/:uuid"
                     render={(props) => (
-                      <ConversationWindow
+                      <RoomWindow
                         className={styles.main}
-                        ref={ConversationWindowRef}
+                        ref={RoomWindowRef}
                         {...props}
                       />
                     )}

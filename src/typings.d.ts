@@ -44,7 +44,7 @@ interface ChatMessage {
   sig: string;
 }
 
-interface ConversationInfo {
+interface RoomInfo {
   uuid: string;
   self: string;
   peers: string[];

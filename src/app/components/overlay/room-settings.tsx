@@ -2,21 +2,21 @@ import React from "react";
 import { fetchRoomInfo, setNicknameCommand } from "../../api/api";
 import { AppOverlayMenu } from "./app-overlay";
 
-interface ConversationSettingsProps {
+interface RoomSettingsProps {
   uuid: string;
 }
 
-interface ConversationSettingsState {
-  info: ConversationInfo;
+interface RoomSettingsState {
+  info: RoomInfo;
 }
 
-export class ConversationSettings extends React.Component<
-  ConversationSettingsProps,
-  ConversationSettingsState
+export class RoomSettings extends React.Component<
+  RoomSettingsProps,
+  RoomSettingsState
 > {
   overlayRef: React.RefObject<AppOverlayMenu>;
   nickInputRef: React.RefObject<HTMLInputElement>;
-  constructor(props: ConversationSettingsProps) {
+  constructor(props: RoomSettingsProps) {
     super(props);
 
     this.state = {
@@ -28,7 +28,7 @@ export class ConversationSettings extends React.Component<
   }
 
   render(): JSX.Element {
-    const roomInfo = this.state.info
+    const roomInfo = this.state.info;
     return (
       <AppOverlayMenu ref={this.overlayRef}>
         <h1>{"Room Settings - " + this.props.uuid}</h1>
@@ -39,17 +39,14 @@ export class ConversationSettings extends React.Component<
         />
         <button
           onClick={() => {
-            const nick = this.nickInputRef.current.value
-            setNicknameCommand(
-              roomInfo.uuid,
-              nick
-            ).then((resp) => {
+            const nick = this.nickInputRef.current.value;
+            setNicknameCommand(roomInfo.uuid, nick).then((resp) => {
               if (resp.ok) {
                 const newInfo = roomInfo;
                 newInfo.nicks[roomInfo.self] = nick;
                 this.setState({
-                  info: newInfo
-                })
+                  info: newInfo,
+                });
               }
             });
           }}

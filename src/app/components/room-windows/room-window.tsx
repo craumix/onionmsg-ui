@@ -8,11 +8,11 @@ import {
 } from "../../api/api";
 import { Avatar } from "../avatar";
 import { MessageContainer } from "./message-container";
-import styles from "./conversation-window.sass";
+import styles from "./room-window.sass";
 import { FaBackspace, FaPaperclip, FaUpload } from "react-icons/fa";
 import { BiSticker } from "react-icons/bi";
 import { GrEmoji } from "react-icons/gr";
-import { ConversationSettings } from "../overlay/conversation-settings";
+import { RoomSettings } from "../overlay/room-settings";
 import { ConfirmDialog } from "../overlay/confirm-dialog";
 import {
   filesizeFromPath,
@@ -22,7 +22,7 @@ import {
 import prettyBytes from "pretty-bytes";
 import mime from "mime";
 
-interface ConversationWindowState {
+interface RoomWindowState {
   messageInput: string;
   messageContainers: JSX.Element[];
   lastMessageSenderUUID: string;
@@ -32,12 +32,9 @@ interface ConversationWindowState {
   replyTo: ChatMessage;
 }
 
-export class ConversationWindow extends React.Component<
-  any,
-  ConversationWindowState
-> {
+export class RoomWindow extends React.Component<any, RoomWindowState> {
   messagesEndRef: React.RefObject<HTMLDivElement>;
-  convSettingsRef: React.RefObject<ConversationSettings>;
+  convSettingsRef: React.RefObject<RoomSettings>;
   uploadConfirmDialog: React.RefObject<ConfirmDialog>;
 
   constructor(props: any) {
@@ -61,10 +58,8 @@ export class ConversationWindow extends React.Component<
 
   render(): JSX.Element {
     return (
-      <div
-        className={`${styles.conversationContainer} ${this.props.className}`}
-      >
-        <ConversationSettings ref={this.convSettingsRef} uuid={this.uuid()} />
+      <div className={`${styles.roomContainer} ${this.props.className}`}>
+        <RoomSettings ref={this.convSettingsRef} uuid={this.uuid()} />
         <ConfirmDialog
           ref={this.uploadConfirmDialog}
           title="Upload file"
@@ -83,7 +78,7 @@ export class ConversationWindow extends React.Component<
           <FaUpload size="48" style={{ color: "#888" }} />
           Upload File(s)
         </FileDrop>
-        <div className={styles.conversationHeader}>
+        <div className={styles.roomHeader}>
           <Avatar
             seed={this.uuid()}
             size={32}
@@ -113,9 +108,7 @@ export class ConversationWindow extends React.Component<
           <div ref={this.messagesEndRef} />
         </div>
         {this.state.replyTo ? (
-          <div
-            className={styles.replyContainer}
-          >
+          <div className={styles.replyContainer}>
             <div
               style={{
                 display: "flex",
@@ -147,7 +140,7 @@ export class ConversationWindow extends React.Component<
             </div>
           </div>
         ) : null}
-        <div className={styles.conversationFooter}>
+        <div className={styles.roomFooter}>
           <textarea
             placeholder="Send a message here..."
             className={styles.inputField}

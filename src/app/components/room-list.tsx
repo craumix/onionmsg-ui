@@ -1,28 +1,25 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { deleteRoom, fetchRoomList } from "../api/api";
-import styles from "./conversation-list.sass";
+import styles from "./room-list.sass";
 import { BsThreeDots } from "react-icons/bs";
 import { FaCog, FaDoorOpen } from "react-icons/fa";
 import { Dropdown } from "./dropdown";
 import { Avatar } from "./avatar";
-import { ConversationSettings } from "./overlay/conversation-settings";
+import { RoomSettings } from "./overlay/room-settings";
 import { ConfirmDialog } from "./overlay/confirm-dialog";
 
-interface ConversationListProps {
+interface RoomListProps {
   match?: any;
 }
 
-interface ConversationListState {
+interface RoomListState {
   elementFilter: string;
-  elements: ConversationInfo[];
+  elements: RoomInfo[];
 }
 
-export class ConversationList extends React.Component<
-  ConversationListProps,
-  ConversationListState
-> {
-  constructor(props: ConversationListProps) {
+export class RoomList extends React.Component<RoomListProps, RoomListState> {
+  constructor(props: RoomListProps) {
     super(props);
     this.state = {
       elementFilter: "",
@@ -55,7 +52,7 @@ export class ConversationList extends React.Component<
         {this.state.elements.map((element) => {
           if (this.matchesFilter(element)) {
             return (
-              <ConversationListElement
+              <RoomListElement
                 info={element}
                 key={element.uuid}
                 selected={this.props.match.params.uuid == element.uuid}
@@ -73,7 +70,7 @@ export class ConversationList extends React.Component<
     });
   }
 
-  pushConversations(...infos: ConversationInfo[]): void {
+  pushRooms(...infos: RoomInfo[]): void {
     const newElements = this.state.elements;
     infos.forEach((e) => {
       newElements.push(e);
@@ -84,7 +81,7 @@ export class ConversationList extends React.Component<
     });
   }
 
-  matchesFilter(info: ConversationInfo): boolean {
+  matchesFilter(info: RoomInfo): boolean {
     if (this.state.elementFilter === "") return true;
 
     if (info.uuid.toLocaleLowerCase().includes(this.state.elementFilter))
@@ -97,17 +94,17 @@ export class ConversationList extends React.Component<
   }
 }
 
-interface ConversationListElementProps {
-  info: ConversationInfo;
+interface RoomListElementProps {
+  info: RoomInfo;
   selected?: boolean;
 }
 
-class ConversationListElement extends React.Component<ConversationListElementProps> {
+class RoomListElement extends React.Component<RoomListElementProps> {
   dropdownRef: React.RefObject<Dropdown>;
-  convSettingsRef: React.RefObject<ConversationSettings>;
+  convSettingsRef: React.RefObject<RoomSettings>;
   dialogRef: React.RefObject<ConfirmDialog>;
 
-  constructor(props: ConversationListElementProps) {
+  constructor(props: RoomListElementProps) {
     super(props);
 
     this.dropdownRef = React.createRef();
@@ -123,10 +120,7 @@ class ConversationListElement extends React.Component<ConversationListElementPro
       ${this.props.selected ? styles.selectedEntry : ""}
       `}
       >
-        <ConversationSettings
-          ref={this.convSettingsRef}
-          uuid={this.props.info.uuid}
-        />
+        <RoomSettings ref={this.convSettingsRef} uuid={this.props.info.uuid} />
         <ConfirmDialog
           ref={this.dialogRef}
           title="Leave Room"

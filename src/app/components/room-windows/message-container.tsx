@@ -9,7 +9,7 @@ import { findYoutubeIDs } from "../../utils/youtube";
 import { YoutubeContainer } from "./youtube-container";
 import { BsThreeDots } from "react-icons/bs";
 import { Dropdown, DropdownEntry } from "../dropdown";
-import { ConversationWindow } from "./conversation-window";
+import { RoomWindow } from "./room-window";
 import { MessageSource } from "../overlay/message-source";
 import { rndColorFromString } from "../../utils/color";
 import { Avatar } from "../avatar";
@@ -17,7 +17,7 @@ import { Avatar } from "../avatar";
 interface MessageContainerProps {
   message: ChatMessage;
   authorHeader?: boolean;
-  parentContainer?: ConversationWindow;
+  parentContainer?: RoomWindow;
   autoHideTimestamp?: boolean;
 }
 
