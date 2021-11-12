@@ -15,6 +15,7 @@ import NotificationSoundFile from "./assets/sounds/gesture-192.mp3";
 import { AppSidebar } from "./components/app-sidebar";
 import { ThemeProvider } from "./themes";
 import { RoomsContext, RoomsProvider } from "./rooms";
+import { decode as decode64 } from "js-base64";
 
 const NilUUID = "00000000-0000-0000-0000-000000000000";
 
@@ -31,16 +32,6 @@ function render() {
       const foo: { uuid: string; messages: ChatMessage[] } = notification.data;
 
       for (const msg of foo.messages) {
-        if (
-          msg.meta.sender != RoomProviderRef.current.findById(foo.uuid).self
-        ) {
-          //Do notifications
-          NotificationSound.play();
-          break;
-        }
-      }
-
-      for (const msg of foo.messages) {
         if (msg.content.type == "mtype.cmd") {
           RoomProviderRef.current.reloadRoom(foo.uuid);
           break;
@@ -49,6 +40,35 @@ function render() {
 
       if (RoomWindowRef.current?.props.match.params.uuid === foo.uuid) {
         RoomWindowRef.current.appendMessages(foo.messages);
+      } else {
+        for (const msg of foo.messages) {
+          if (
+            msg.meta.sender != RoomProviderRef.current.findById(foo.uuid).self
+          ) {
+            //Do notifications
+            if (msg.content.type != "mtype.cmd") {
+              NotificationSound.play();
+
+              let body: string;
+              switch (msg.content.type) {
+                case "mtype.text":
+                  body = decode64(msg.content.data ?? "");
+                  break;
+                case "mtype.file":
+                  body = msg.content.blob.name;
+                  break;
+                case "mtype.sticker":
+                  body = "Sticker";
+                  break;
+                default:
+                  body = "Unknown message type " + msg.content.type;
+              }
+
+              new Notification(foo.uuid, { body: body });
+            }
+            break;
+          }
+        }
       }
     } else if (notification.type === "NewRoom") {
       RoomProviderRef.current.appendRoom(notification.data);
