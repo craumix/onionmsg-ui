@@ -24,8 +24,6 @@ const RoomProviderRef: React.RefObject<RoomsProvider> = React.createRef();
 
 const NotificationSound = new Audio(NotificationSoundFile);
 
-function processBackendNotifications(appendRoom: (arg0: RoomInfo) => {}) {}
-
 function render() {
   listenOnBackendNotifications((notification: DaemonNotification) => {
     console.log(notification);
@@ -33,16 +31,20 @@ function render() {
       //Do notifications
       NotificationSound.play();
 
-      if (
-        RoomWindowRef.current?.props.match.params.uuid ===
-        notification.data.uuid
-      ) {
-        RoomWindowRef.current.loadNextMessage(
-          notification.data.messages.length
-        );
+      const foo: { uuid: string; messages: ChatMessage[] } = notification.data;
+
+      for (const msg of foo.messages) {
+        if (msg.content.type == "mtype.cmd") {
+          RoomProviderRef.current.reloadRoom(foo.uuid);
+          break;
+        }
+      }
+
+      if (RoomWindowRef.current?.props.match.params.uuid === foo.uuid) {
+        RoomWindowRef.current.loadNextMessage(foo.messages.length);
       }
     } else if (notification.type === "NewRoom") {
-      RoomProviderRef.current.appendRoom(notification.data)
+      RoomProviderRef.current.appendRoom(notification.data);
       //TODO make this less hacky and not depend on the Sidebar for the history
       AppSidebarRef.current.props.history.push("/c/" + notification.data.uuid);
     } else if (notification.type === "NewRequest") {

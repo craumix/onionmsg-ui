@@ -1,18 +1,21 @@
 import React from "react";
-import { fetchRoomList } from "./api/api";
+import { fetchRoomInfo, fetchRoomList } from "./api/api";
 
 export const RoomsContext = React.createContext({
   rooms: undefined,
   hardReload: () => {
     return;
   },
-  append: (conv: RoomInfo) => {
+  appendRoom: (conv: RoomInfo) => {
     return;
   },
   findById: (id: string): RoomInfo => {
     return undefined;
   },
   updateRoom: (conv: RoomInfo) => {
+    return;
+  },
+  reloadRoom: (uuid: string) => {
     return;
   },
 });
@@ -60,6 +63,14 @@ export class RoomsProvider extends React.Component<any, RoomsProviderState> {
     });
   }
 
+  reloadRoom(uuid: string): void {
+    fetchRoomInfo(uuid)
+      .then((resp) => resp.json())
+      .then((res) => {
+        this.updateRoom(res);
+      });
+  }
+
   render(): JSX.Element {
     return (
       <RoomsContext.Provider
@@ -68,7 +79,7 @@ export class RoomsProvider extends React.Component<any, RoomsProviderState> {
           hardReload: () => {
             this.loadRooms();
           },
-          append: (room: RoomInfo) => {
+          appendRoom: (room: RoomInfo) => {
             this.appendRoom(room);
           },
           findById: (id: string) => {
@@ -76,6 +87,9 @@ export class RoomsProvider extends React.Component<any, RoomsProviderState> {
           },
           updateRoom: (room: RoomInfo) => {
             this.updateRoom(room);
+          },
+          reloadRoom: (uuid: string) => {
+            this.reloadRoom(uuid);
           },
         }}
       >
