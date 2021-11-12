@@ -283,50 +283,20 @@ class FileMessageContainer extends React.Component<FileMessageContainerProps> {
         return <img src={this.blobUrl} />;
       case "video":
         return (
-          <video
-            controls
-            controlsList="nodownload noremoteplayback"
-            disablePictureInPicture
-            preload="metadata"
-          >
-            <source src={this.blobUrl} type={this.props.msgContent.blob.type} />
-            The format {this.props.msgContent.blob.type} is not supported!
-          </video>
+          <VideoAttachment
+            url={this.blobUrl}
+            mime={this.props.msgContent.blob.type}
+          />
         );
       case "audio":
         return (
-          <audio
-            controls
-            controlsList="nodownload"
-            style={{
-              height: "48px",
-              width: "384px",
-            }}
-            preload="metadata"
-          >
-            <source src={this.blobUrl} type={this.props.msgContent.blob.type} />
-            The format {this.props.msgContent.blob.type} is not supported!
-          </audio>
+          <AudioAttachment
+            url={this.blobUrl}
+            mime={this.props.msgContent.blob.type}
+          />
         );
       default:
-        return (
-          <div
-            style={{
-              width: "fit-content",
-              height: "32px",
-              lineHeight: "32px",
-              backgroundColor: "#DDD",
-              color: "#444",
-              borderRadius: "8px",
-              padding: "4px",
-            }}
-          >
-            <div className={styles.attachmentIconBox}>
-              <FaPaperclip style={{ color: "#AAA" }} />
-            </div>
-            {this.props.msgContent.blob.name}
-          </div>
-        );
+        return <GenericAttachment name={this.props.msgContent.blob.name} />;
     }
   }
 }
@@ -371,6 +341,78 @@ class AuthorDivider extends React.Component<any> {
             }
           </RoomsContext.Consumer>
         </p>
+      </div>
+    );
+  }
+}
+
+interface VideoAttachmentProps {
+  url: string;
+  mime: string;
+}
+
+class VideoAttachment extends React.PureComponent<VideoAttachmentProps> {
+  render(): JSX.Element {
+    return (
+      <video
+        controls
+        controlsList="nodownload noremoteplayback"
+        disablePictureInPicture
+        preload="metadata"
+      >
+        <source src={this.props.url} type={this.props.mime} />
+        The format {this.props.mime} is not supported!
+      </video>
+    );
+  }
+}
+
+interface AudioAttachmentProps {
+  url: string;
+  mime: string;
+}
+
+class AudioAttachment extends React.PureComponent<AudioAttachmentProps> {
+  render(): JSX.Element {
+    return (
+      <audio
+        controls
+        controlsList="nodownload"
+        style={{
+          height: "48px",
+          width: "384px",
+        }}
+        preload="metadata"
+      >
+        <source src={this.props.url} type={this.props.mime} />
+        The format {this.props.mime} is not supported!
+      </audio>
+    );
+  }
+}
+
+interface GenericAttachmentProps {
+  name: string;
+}
+
+class GenericAttachment extends React.PureComponent<GenericAttachmentProps> {
+  render(): JSX.Element {
+    return (
+      <div
+        style={{
+          width: "fit-content",
+          height: "32px",
+          lineHeight: "32px",
+          backgroundColor: "#DDD",
+          color: "#444",
+          borderRadius: "8px",
+          padding: "4px",
+        }}
+      >
+        <div className={styles.attachmentIconBox}>
+          <FaPaperclip style={{ color: "#AAA" }} />
+        </div>
+        {this.props.name}
       </div>
     );
   }
