@@ -12,6 +12,9 @@ export const RoomsContext = React.createContext({
   findById: (id: string): RoomInfo => {
     return undefined;
   },
+  updateRoom: (conv: RoomInfo) => {
+    return;
+  },
 });
 
 interface RoomsProviderState {
@@ -42,10 +45,18 @@ export class RoomsProvider extends React.Component<any, RoomsProviderState> {
   }
 
   appendRoom(room: RoomInfo): void {
-    const newConvs = this.state.rooms;
-    newConvs.push(room);
+    const rooms = this.state.rooms;
+    rooms.push(room);
     this.setState({
-      rooms: newConvs,
+      rooms: rooms,
+    });
+  }
+
+  updateRoom(room: RoomInfo): void {
+    const rooms = this.state.rooms.filter((r) => r.uuid !== room.uuid);
+    rooms.push(room);
+    this.setState({
+      rooms: rooms,
     });
   }
 
@@ -62,6 +73,9 @@ export class RoomsProvider extends React.Component<any, RoomsProviderState> {
           },
           findById: (id: string) => {
             return this.state.rooms?.find((r) => r.uuid === id);
+          },
+          updateRoom: (room: RoomInfo) => {
+            this.updateRoom(room);
           },
         }}
       >
